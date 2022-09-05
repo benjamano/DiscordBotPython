@@ -130,4 +130,4 @@ async def DM(ctx, user : discord.User, *, msg):
     #player.start()
     
 
-client.run('NzIyODU5MTI4NTQ3OTY3MTAw.G9kisn.FcW3Mnh-OVsD280CSfb0tVF1gy1B51oFqJXL14') # <----- Enter your Bot Token code here (Found in Discord Developer Portal)
+client.run('') # <----- Enter your Bot Token code here (Found in Discord Developer Portal)
