@@ -10,9 +10,10 @@ from discord.ext import commands, tasks
 
 token = 'nul'
 
-client = commands.Bot(command_prefix = 'oioi ') # Sets the command prefix to the string 'oioi'
+client = commands.Bot(command_prefix = 'oioi ') # Sets the command prefix to the string 'oioi', you can change it to whatever you want.     
+# NOTE: The task named 'change status' automates this, changing the status every 10 seconds
 
-status = cycle(['Back from the dead!','Prefix = oioi',"willywillywillywillywilly"])
+status = cycle(['Back from the dead!','Prefix = oioi',]) # This cycles the discord "Status between two defined messages
 
 players = {}
 
@@ -20,12 +21,11 @@ date_of_today = datetime.date.today()
 
 
 
-
+# This event run when the code first starts, it outputs the latency/ping and starts the discord status to loop.
 @client.event
 async def on_ready():
     print(f'Ping: {round(client.latency * 1000)}ms')
     change_status.start()
-    #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
     print('Logged on as {0}!'.format(client.user)) # States the name and ID of the Client/Bot as it is first initialized 
 
 @tasks.loop(seconds=10)
@@ -47,18 +47,18 @@ async def credits(ctx):
     await ctx.send(embed=embed)
 
 
-
+#This command send the ping to the discord channel it was called in
 @client.command()
 async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
 
-
+#This is mainly just a test command
 @client.command()
 async def foo(ctx, arg):
     print('Triggered foo')
     await ctx.send(arg)
 
-
+#This command allows a user to ask a question to an 8ball and picks a random response.
 @client.command(aliases=['8ball','test'])
 async def _8ball(ctx, question):
     responses = ["It is certain.",
