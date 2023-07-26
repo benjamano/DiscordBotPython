@@ -82,22 +82,6 @@ async def _8ball(ctx, question):
                 "Outlook not so good.",
                 "Very doubtful."]
     await ctx.send(f'Question: {question}\nAnswer: {random.choice(responses)}')
-
-
-@client.command(aliases=['ratemywilly'])
-async def _willyrate(ctx):
-    responses = ["Its 12 inches long",
-                "Gigantic.",
-                "[Insert girlfriend name here] is very very lucky",
-                "Taller than the empire state building",
-                "The size of my pinky toe",
-                "So so so small",
-                "I feel sorry for your girlfriend, its the smallest penis ever",
-                "The size of a peanut",
-                "You may aswell just chop it off.",
-                "It's 5000 inches long!",
-                "It's 0.5 inches long."]
-    await ctx.send(f'{random.choice(responses)}')
     #^ This picks and random statement to send as a response
 
 #To use this command, in discord type: "oioi dm [user's @] [message]" e.g. "oioi dm @benjamano hello"
