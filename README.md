@@ -1,7 +1,7 @@
 # Discord-Bot-Python
 A simple Discord bot made using Python.
 
-Annoyingly, I used to have a much more sophisticated version of this, but managed to lose it while using a faaulty hard drive I robbed from an old TV.
+Annoyingly, I used to have a much more sophisticated version of this, but managed to lose it while using a faulty hard drive I robbed from an old TV.
 
 This is a simple program designed to work with the discord.py library used to access Discord's bot API and create a bot.
 
