@@ -254,6 +254,8 @@ async def playersonline(ctx):
             colour = discord.Colour.red()
         )
         
+        embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Mincraft Server')
+        
         await ctx.send(embed=embed) 
     
     else:
