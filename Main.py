@@ -110,8 +110,8 @@ async def on_ready():
                 if status:
                     ServerConn = True
         
-            except:
-                print("Couldn't connect to server, probably starting, waiting for 5 minutes.\nTries: ", tries)  
+            except Exception as e:
+                print(f"Couldn't connect to server, probably starting, waiting for 5 minutes. ({e})\nTries: ", tries)  
                 tries += 1
                 await asyncio.sleep(300)
             
@@ -131,8 +131,8 @@ async def on_ready():
                 if status:
                     ServerConn = True
         
-            except:
-                print("Couldn't connect to server, probably starting, waiting for 1 minute.\nTries: ", tries)
+            except Exception as e:
+                print(f"Couldn't connect to server, probably starting, waiting for 1 minute ({e}).\nTries: ", tries)
                 tries += 1
                 await asyncio.sleep(60)
             
@@ -294,8 +294,8 @@ async def totalplaytime(interaction: discord.Interaction):
             playTime += str(f"- {row['username']} has played for {row['minutesplayed']} minutes\n")
         
         embed = discord.Embed(
-            title = "Players Online",
-            description = f"Players Online: \n{playTime}",
+            title = "Total Playtime for each player",
+            description = f"Playtime: \n{playTime}",
             colour = discord.Colour.green()
         )
         
