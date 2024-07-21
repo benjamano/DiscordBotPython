@@ -162,8 +162,8 @@ def updatePlaytime(username, additionalMinutes, reset = False):
             print(f"Reset {username}'s minutes.")
         
         elif row["username"] == username and reset == False:
-            print(f"Increased {username}'s minutes played by {additionalMinutes}")
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
+            print(f"Increased {username}'s minutes played by {additionalMinutes}\tNew Minutes: {row['minutesplayed']} ({(row['minutesplayed'])/60} Hours)")
             
         break
     
@@ -211,8 +211,6 @@ async def checkPlaytime():
 @tasks.loop(time=datetime.time(hour=0, minute=0))
 async def resetPlaytime():
     updatePlaytime(".mattcur", 0, reset=True)
-    
-    print("Playtime has been reset")
     
 
 
