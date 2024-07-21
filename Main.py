@@ -32,7 +32,7 @@ client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(),
 
 allowed_mentions = discord.AllowedMentions(everyone = True)
 
-status = cycle(['Back from the dead!','Prefix = oioi',]) # This cycles the discord "Status between two defined messages
+statuses = cycle(['Back from the dead!','Prefix = oioi',])
 
 players = {}
 playerPlaytime = {
