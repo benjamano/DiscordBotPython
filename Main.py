@@ -121,7 +121,7 @@ async def on_ready():
                 server = MC.lookup(ServerIP)
                 status = server.status()
                 
-                if localConnection != 'False':
+                if localConnection != 'True':
                 
                     rcon = RCONClient(ServerIP, port=PORT)
 
@@ -254,7 +254,7 @@ async def playersonline(ctx):
             colour = discord.Colour.red()
         )
         
-        return ctx.send(embed=embed) 
+        await ctx.send(embed=embed) 
     
     else:
         try:
