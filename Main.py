@@ -83,6 +83,7 @@ async def on_ready():
     global status, server
     
     ServerConn = False
+    RCONConnection = False
     
     print(f'\nPing: {round(client.latency * 1000)}ms')
     
@@ -90,39 +91,36 @@ async def on_ready():
     
     tries = 0
     
-    while ServerConn == False:
+    while ServerConn == False and RCONConnection == False:
         
         if tries > 4:
-            print("Cannot connect to server after 5 Tries. Stopping.")
-            raise ConnectionRefusedError
+            print("Cannot connect to server after 5 Tries. Giving up.")
         
         try:
             server = MC.lookup(ServerIP)
             status = server.status()
             
-            if status:
-                ServerConn = True
-        
-        except:
-            print("Couldn't connect to server, probably starting, waiting.")
-            await asyncio.sleep(60)
+            if localConnection != 'False':
             
-    RCONConnection = False
-
-    if localConnection != 'False':
-        
-        while RCONConnection == False:
-        
-            try:
                 rcon = RCONClient(ServerIP, port=PORT)
 
                 if rcon.login(str(code)):
                     RCONConnection = True
+            
+            if status:
+                ServerConn = True
                 
-            except:
-                print("Couldn't connect to server, probably starting, waiting.")
-                await asyncio.sleep(60)
-    #resp = rcon.command("say Crazy Neil is watching....")
+        
+        except:
+            print("Couldn't connect to server, probably starting, waiting.")
+            tries += 1
+            await asyncio.sleep(60)
+            
+    try:
+        resp = rcon.command("say Crazy Neil is watching....")
+    
+    except Exception as e:
+        print(f"Couldnt send message to server, probably not connected: {e}")
 
     print(f'\n\nLogged in as {client.user}')
     
@@ -131,8 +129,8 @@ async def on_ready():
             
         resetPlaytime.start()
             
-    except:
-        print("Failed to run a task")
+    except Exception as e:
+        print("Failed to run a task:", e)
     
     try:
         synced = await client.tree.sync()
