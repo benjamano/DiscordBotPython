@@ -9,9 +9,30 @@ from discord import app_commands
 from discord import Colour as c 
 import asyncio
 from mctools import RCONClient 
+import csv
 
 with open("clientkey.txt", "r") as f:
     key = f.readline()
+    code = f.readline()
+    
+    f.close()
+    
+with open("hours.csv", mode="r") as csvf:
+    csvReader = csv.DictReader(csvf, ["username", "minutesplayed"])
+    
+    lineCount = 0
+    
+    for row in csvReader:
+        if lineCount == 0:
+            print(f"Column names: {", ".join(row)}")
+            lineCount += 1
+            
+        else:
+        
+            print(f"{row["username"]} has {row["minutesplayed"]} minutes played.\n")
+        lineCount += 1
+        
+    csvf.close()
 
 HOST = '192.168.1.41'
 PORT = 25575
@@ -20,7 +41,7 @@ RCONConnection = False
 
 rcon = RCONClient(HOST, port=PORT)
 
-if rcon.login("1552"):
+if rcon.login(str(code)):
     
     RCONConnection = True
     
@@ -34,16 +55,12 @@ allowed_mentions = discord.AllowedMentions(everyone = True)
 
 statuses = cycle(['Back from the dead!','Prefix = oioi',])
 
-players = {}
-playerPlaytime = {
-    ".mattcur" : 0,
-}
-
 date_of_today = datetime.date.today()
 
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
+Version = "2.2.0"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -61,7 +78,7 @@ print("""
 ╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
 ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
 
-print("Version 2.0.2")
+print(f"{Version}")
 
 
 #slash = client.create_group("credits")
@@ -98,17 +115,13 @@ async def on_ready():
             await asyncio.sleep(60)
             
     resp = rcon.command("say Crazy Neil is watching....")
-    
-    print(resp)
 
     print(f'\n\nLogged in as {client.user}')
     
     try:
-        if not checkPlaytime.is_running():
-            checkPlaytime.start()
+        checkPlaytime.start()
             
-        if not resetPlaytime.is_running():
-            resetPlaytime.start()
+        resetPlaytime.start()
             
     except:
         print("Failed to run a task")
@@ -125,7 +138,7 @@ async def on_ready():
     
     channel = client.get_channel(TestServerID)
     if channel:
-        await channel.send(f" Succesfully Started @ {datetime.datetime.now()} \n Version 2.1.5")
+        await channel.send(f" Succesfully Started @ {datetime.datetime.now()} \n {Version} ")
 
 
 
@@ -136,25 +149,59 @@ async def on_ready():
 async def change_status():
     await client.change_presence(activity=discord.Game(next(statuses)))
     
+
+def updatePlaytime(username, additionalMinutes, reset = False):
+    with open("hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf)
+        
+        data = list(csvReader)
     
-@tasks.loop(seconds = 600)
+    for row in data:
+        if row['username'] == username and reset == True:
+            row['minutesplayed'] = str(0)
+        
+        elif row["username"] == username and reset == False:
+            
+            row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
+            
+        break
+    
+    with open("hours.csv", mode="w", newline='') as csvf:
+        fieldnames = ['username', 'minutesplayed']
+        
+        csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
+        
+        csvWriter.writeheader()
+        csvWriter.writerows(data)
+
+
+@tasks.loop(seconds=600)
 async def checkPlaytime():
     TrackingPlayersOnline = []
     status = server.status()
     
-    if status.players.sample != None:
+    if status.players.sample is not None:
         for player in status.players.sample:
             TrackingPlayersOnline.append(player.name)
         
         if ".mattcur" in TrackingPlayersOnline:
-            playerPlaytime[".mattcur"] += 600
+            updatePlaytime(".mattcur", 600) 
             
-        if playerPlaytime[".mattcur"] > 18000:
-            channel = client.get_channel(RandStuffGeneralID)
+            with open("hours.csv", mode="r") as csvf:
+                csvReader = csv.DictReader(csvf)
+                
+                for row in csvReader:
+                    if row['username'] == ".mattcur":
+                        playerPlaytime = int(row['minutesplayed'])
+                        
+                        break
             
-            user = client.get_user(707634111627395222)
-            
-            await channel.send(content = f"@everyone {user.mention} has been playing Minecraft for {round(playerPlaytime[".mattcur"]/60/60)} Hours, please tell him to touch some grass", allowed_mentions = allowed_mentions)
+            if playerPlaytime > 18000:
+                channel = client.get_channel(RandStuffGeneralID)
+                
+                user = client.get_user(707634111627395222)
+                
+                await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60 / 60)} hours, please tell him to touch some grass", allowed_mentions=allowed_mentions)
     
     else:
         print("No players online")
@@ -162,7 +209,7 @@ async def checkPlaytime():
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
 async def resetPlaytime():
-    playerPlaytime[".mattcur"] = 0
+    updatePlaytime(".mattcur", 0, reset=True)
     
     print("Playtime has been reset")
     
