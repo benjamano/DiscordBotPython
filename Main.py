@@ -6,7 +6,6 @@ from mcstatus import JavaServer as MC
 from itertools import cycle
 from discord.ext import commands, tasks
 from discord import app_commands
-from discord import Colour as c 
 import asyncio
 from mctools import RCONClient 
 import csv
@@ -34,16 +33,17 @@ with open("hours.csv", mode="r") as csvf:
         
     csvf.close()
 
-HOST = '192.168.1.41'
+ServerIP = '192.168.1.41'
+#ServerIP = '86.128.218.41' External IP
 PORT = 25575
 
 RCONConnection = False
 
-rcon = RCONClient(HOST, port=PORT)
+# rcon = RCONClient(ServerIP, port=PORT)
 
-if rcon.login(str(code)):
+# if rcon.login(str(code)):
     
-    RCONConnection = True
+#     RCONConnection = True
     
 token = 'nul'
 
@@ -104,7 +104,7 @@ async def on_ready():
             raise ConnectionRefusedError
         
         try:
-            server = MC.lookup("192.168.1.41")
+            server = MC.lookup(ServerIP)
             status = server.status()
             
             if status:
@@ -114,7 +114,7 @@ async def on_ready():
             print("Couldn't connect to server, probably starting, waiting.")
             await asyncio.sleep(60)
             
-    resp = rcon.command("say Crazy Neil is watching....")
+    #resp = rcon.command("say Crazy Neil is watching....")
 
     print(f'\n\nLogged in as {client.user}')
     
@@ -219,7 +219,7 @@ async def resetPlaytime():
 
     
 @client.command()
-async def PlayersOnline(ctx):
+async def playersonline(ctx):
     try:
         PlayersOn = ""
         
@@ -235,13 +235,13 @@ async def PlayersOnline(ctx):
         embed = discord.Embed(
             title = "Players Online",
             description = f"Players Online: \n{PlayersOn}",
-            colour = discord.c.green()
+            colour = discord.Colour.green()
         )
         
-    except Exception as e:
-        print(f"Error ruinning Players online commande: {e}")
+        await ctx.send(embed=embed)
         
-    await ctx.send(embed=embed)
+    except Exception as e:
+        print(f"Error running Players online commande: {e}")
 
 
 @client.command(description="Displays the credits")
@@ -249,7 +249,7 @@ async def credits(ctx):
     embed = discord.Embed(
         title = 'Credits',
         description = 'Coded by Ben Mercer',
-        colour = discord.c.blue()
+        colour = discord.Colour.blue()
     )
     
     embed.set_footer(text = 'Thats literally just it')
