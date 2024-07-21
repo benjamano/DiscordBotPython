@@ -11,10 +11,10 @@ from mctools import RCONClient
 import csv
 
 with open("clientkey.txt", "r") as f:
-    key = f.readline()
+    key = f.readline().strip('\n')
     code = f.readline()
     fileServerIP = f.readline()
-    localConnection = f.readline()
+    localConnection = f.readline().strip('\n')
     
     f.close()
     
