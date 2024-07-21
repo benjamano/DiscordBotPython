@@ -29,9 +29,10 @@ token = 'nul'
 intents = discord.Intents.all()
 
 client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(), help_command=None, case_insensitive = False) # Sets the command prefix to the string 'oioi'
+
 allowed_mentions = discord.AllowedMentions(everyone = True)
 
-statuses = cycle(['Back from the dead!','Prefix = oioi'])
+status = cycle(['Back from the dead!','Prefix = oioi',]) # This cycles the discord "Status between two defined messages
 
 players = {}
 playerPlaytime = {
@@ -217,7 +218,7 @@ async def ping(ctx):
 async def foo(interaction: discord.Interaction):
     await interaction.response.send_message("foo",ephemeral=True)
 
-
+#This command allows a user to ask a question to an 8ball and picks a random response.
 @client.command(aliases=['8ball','test'])
 async def _8ball(ctx):
     responses = ["It is certain.",
