@@ -37,16 +37,6 @@ with open("hours.csv", mode="r") as csvf:
 
 ServerIP = fileServerIP
 PORT = 25575
-
-RCONConnection = False
-
-if localConnection != 'False':
-
-    rcon = RCONClient(ServerIP, port=PORT)
-
-    if rcon.login(str(code)):
-        
-        RCONConnection = True
     
 token = 'nul'
 
@@ -117,6 +107,21 @@ async def on_ready():
             print("Couldn't connect to server, probably starting, waiting.")
             await asyncio.sleep(60)
             
+    RCONConnection = False
+
+    if localConnection != 'False':
+        
+        while RCONConnection == False:
+        
+            try:
+                rcon = RCONClient(ServerIP, port=PORT)
+
+                if rcon.login(str(code)):
+                    RCONConnection = True
+                
+            except:
+                print("Couldn't connect to server, probably starting, waiting.")
+                await asyncio.sleep(60)
     #resp = rcon.command("say Crazy Neil is watching....")
 
     print(f'\n\nLogged in as {client.user}')
