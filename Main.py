@@ -159,9 +159,10 @@ def updatePlaytime(username, additionalMinutes, reset = False):
     for row in data:
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
+            print(f"Reset {username}'s minutes.")
         
         elif row["username"] == username and reset == False:
-            
+            print(f"Increased {username}'s minutes played by {additionalMinutes}")
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
             
         break
