@@ -13,6 +13,8 @@ import csv
 with open("clientkey.txt", "r") as f:
     key = f.readline()
     code = f.readline()
+    fileServerIP = f.readline()
+    localConnection = f.readline()
     
     f.close()
     
@@ -33,17 +35,18 @@ with open("hours.csv", mode="r") as csvf:
         
     csvf.close()
 
-ServerIP = '192.168.1.41'
-#ServerIP = '86.128.218.41' External IP
+ServerIP = fileServerIP
 PORT = 25575
 
 RCONConnection = False
 
-# rcon = RCONClient(ServerIP, port=PORT)
+if localConnection != 'False':
 
-# if rcon.login(str(code)):
-    
-#     RCONConnection = True
+    rcon = RCONClient(ServerIP, port=PORT)
+
+    if rcon.login(str(code)):
+        
+        RCONConnection = True
     
 token = 'nul'
 
@@ -197,7 +200,7 @@ async def checkPlaytime():
                         
                         break
             
-            if playerPlaytime > 18000:
+            if playerPlaytime > 360:
                 channel = client.get_channel(RandStuffGeneralID)
                 
                 user = client.get_user(707634111627395222)
