@@ -13,6 +13,8 @@ import csv
 with open("clientkey.txt", "r") as f:
     key = f.readline()
     code = f.readline()
+    fileServerIP = f.readline()
+    localConnection = f.readline()
     
     f.close()
     
@@ -33,17 +35,18 @@ with open("hours.csv", mode="r") as csvf:
         
     csvf.close()
 
-ServerIP = '192.168.1.41'
-#ServerIP = '86.128.218.41' External IP
+ServerIP = fileServerIP
 PORT = 25575
 
 RCONConnection = False
 
-# rcon = RCONClient(ServerIP, port=PORT)
+if localConnection != 'False':
 
-# if rcon.login(str(code)):
-    
-#     RCONConnection = True
+    rcon = RCONClient(ServerIP, port=PORT)
+
+    if rcon.login(str(code)):
+        
+        RCONConnection = True
     
 token = 'nul'
 
@@ -60,7 +63,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.2.0"
+Version = "2.2.4"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -197,7 +200,7 @@ async def checkPlaytime():
                         
                         break
             
-            if playerPlaytime > 18000:
+            if playerPlaytime > 360:
                 channel = client.get_channel(RandStuffGeneralID)
                 
                 user = client.get_user(707634111627395222)
@@ -244,6 +247,28 @@ async def playersonline(ctx):
         print(f"Error running Players online commande: {e}")
 
 
+@client.tree.command(name="totalplaytime")
+async def totalplaytime(interaction: discord.Interaction):
+    with open("hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf)
+        
+        data = list(csvReader)
+        
+        playTime = ""
+        
+        for row in data:
+            playTime += str(f"- {row['username']} has played for {row['minutesplayed']} minutes\n")
+        
+        embed = discord.Embed(
+            title = "Players Online",
+            description = f"Players Online: \n{playTime}",
+            colour = discord.Colour.green()
+        )
+        
+        csvf.close()
+        
+        await interaction.response.send_message(embed=embed,ephemeral=False)
+        
 @client.command(description="Displays the credits")
 async def credits(ctx):
     embed = discord.Embed(
