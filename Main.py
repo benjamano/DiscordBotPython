@@ -97,7 +97,9 @@ async def on_ready():
             print("Couldn't connect to server, probably starting, waiting.")
             await asyncio.sleep(60)
             
-    resp = rcon.command("broadcast Hello RCON!")
+    resp = rcon.command("say Crazy Neil is watching....")
+    
+    print(resp)
 
     print(f'\n\nLogged in as {client.user}')
     
