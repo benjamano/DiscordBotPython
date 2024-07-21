@@ -163,7 +163,7 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         
         elif row["username"] == username and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            print(f"Increased {username}'s minutes played by {additionalMinutes}\tNew Minutes: {row['minutesplayed']} ({(row['minutesplayed'])/60} Hours)")
+            print(f"Increased {username}'s minutes played by {additionalMinutes}\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)")
             
         break
     
