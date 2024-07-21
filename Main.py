@@ -186,7 +186,7 @@ async def checkPlaytime():
             TrackingPlayersOnline.append(player.name)
         
         if ".mattcur" in TrackingPlayersOnline:
-            updatePlaytime(".mattcur", 600) 
+            updatePlaytime(".mattcur", 10) 
             
             with open("hours.csv", mode="r") as csvf:
                 csvReader = csv.DictReader(csvf)
@@ -202,7 +202,7 @@ async def checkPlaytime():
                 
                 user = client.get_user(707634111627395222)
                 
-                await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60 / 60)} hours, please tell him to touch some grass", allowed_mentions=allowed_mentions)
+                await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=allowed_mentions)
     
     else:
         print("No players online")
