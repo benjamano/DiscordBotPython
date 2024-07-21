@@ -80,7 +80,7 @@ print(f"{Version}")
 @client.event
 async def on_ready():
     
-    global status, server
+    global status, server, ServerConn, RCONConnection
     
     ServerConn = False
     RCONConnection = False
@@ -94,27 +94,47 @@ async def on_ready():
     while ServerConn == False and RCONConnection == False:
         
         if tries > 4:
-            print("Cannot connect to server after 5 Tries. Giving up.")
-        
-        try:
-            server = MC.lookup(ServerIP)
-            status = server.status()
+            print("Cannot connect to server after 5 Tries. Trying again every 5 minutes.")
             
-            if localConnection != 'False':
-            
-                rcon = RCONClient(ServerIP, port=PORT)
-
-                if rcon.login(str(code)):
-                    RCONConnection = True
-            
-            if status:
-                ServerConn = True
+            try:
+                server = MC.lookup(ServerIP)
+                status = server.status()
                 
+                if localConnection != 'False':
+                
+                    rcon = RCONClient(ServerIP, port=PORT)
+
+                    if rcon.login(str(code)):
+                        RCONConnection = True
+                
+                if status:
+                    ServerConn = True
         
-        except:
-            print("Couldn't connect to server, probably starting, waiting.")
-            tries += 1
-            await asyncio.sleep(60)
+            except:
+                print("Couldn't connect to server, probably starting, waiting for 5 minutes.\nTries: ", tries)  
+                tries += 1
+                await asyncio.sleep(300)
+            
+        else:
+        
+            try:
+                server = MC.lookup(ServerIP)
+                status = server.status()
+                
+                if localConnection != 'False':
+                
+                    rcon = RCONClient(ServerIP, port=PORT)
+
+                    if rcon.login(str(code)):
+                        RCONConnection = True
+                
+                if status:
+                    ServerConn = True
+        
+            except:
+                print("Couldn't connect to server, probably starting, waiting for 1 minute.\nTries: ", tries)
+                tries += 1
+                await asyncio.sleep(60)
             
     try:
         resp = rcon.command("say Crazy Neil is watching....")
@@ -226,28 +246,39 @@ async def resetPlaytime():
     
 @client.command()
 async def playersonline(ctx):
-    try:
-        PlayersOn = ""
-        
-        status = server.status()
-        
-        try:
-            for player in status.players.sample:
-                PlayersOn += str(f"- {player.name}\n")
-        
-        except:
-            PlayersOn = "Nobody!"
-            
+    
+    if ServerConn == False or RCONConnection == False:
         embed = discord.Embed(
-            title = "Players Online",
-            description = f"Players Online: \n{PlayersOn}",
-            colour = discord.Colour.green()
+            title = "No Connection",
+            description = f"Connection to server is unavailable, please try again later.",
+            colour = discord.Colour.red()
         )
         
-        await ctx.send(embed=embed)
-        
-    except Exception as e:
-        print(f"Error running Players online commande: {e}")
+        return ctx.send(embed=embed) 
+    
+    else:
+        try:
+            PlayersOn = ""
+            
+            status = server.status()
+            
+            try:
+                for player in status.players.sample:
+                    PlayersOn += str(f"- {player.name}\n")
+            
+            except:
+                PlayersOn = "Nobody!"
+                
+            embed = discord.Embed(
+                title = "Players Online",
+                description = f"Players Online: \n{PlayersOn}",
+                colour = discord.Colour.green()
+            )
+            
+            await ctx.send(embed=embed)
+            
+        except Exception as e:
+            print(f"Error running Players online commande: {e}")
 
 
 @client.tree.command(name="totalplaytime")
