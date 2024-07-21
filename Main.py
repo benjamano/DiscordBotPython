@@ -63,7 +63,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.2.0"
+Version = "2.2.4"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -247,6 +247,28 @@ async def playersonline(ctx):
         print(f"Error running Players online commande: {e}")
 
 
+@client.tree.command(name="totalplaytime")
+async def totalplaytime(interaction: discord.Interaction):
+    with open("hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf)
+        
+        data = list(csvReader)
+        
+        playTime = ""
+        
+        for row in data:
+            playTime += str(f"- {row['username']} has played for {row['minutesplayed']} minutes\n")
+        
+        embed = discord.Embed(
+            title = "Players Online",
+            description = f"Players Online: \n{playTime}",
+            colour = discord.Colour.green()
+        )
+        
+        csvf.close()
+        
+        await interaction.response.send_message(embed=embed,ephemeral=False)
+        
 @client.command(description="Displays the credits")
 async def credits(ctx):
     embed = discord.Embed(
