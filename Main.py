@@ -8,6 +8,7 @@ from discord import app_commands
 import asyncio
 from mctools import RCONClient, QUERYClient 
 import csv
+import re
 
 with open("clientkey.txt", "r") as f:
     key = f.readline().strip('\n')
@@ -201,7 +202,7 @@ async def checkPlaytime():
         qry.stop()
         
         for player in playerList:
-            if player == (".mattcur".strip()):
+            if ".mattcur" in player:
                 print("True")
             else:
                 print("False ",player, type(player))
