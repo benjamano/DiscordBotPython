@@ -53,7 +53,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.2.4.2"
+Version = "2.2.6"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -71,7 +71,7 @@ print("""
 ╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
 ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
 
-print(f"{Version}")
+print(f"Version {Version}")
 
 
 #slash = client.create_group("credits")
@@ -93,7 +93,7 @@ async def on_ready():
     while ServerConn == False:
         try:
             if localConnection == 'True':
-                print(f"Attempting to connect to server at IP {ServerIP}:{PORT}")
+                #print(f"Attempting to connect to server at IP {ServerIP}:{PORT}")
             
                 rcon = RCONClient('127.0.0.1', port=25575)
                 qry = QUERYClient(host='127.0.0.1', port=25565)
@@ -101,7 +101,7 @@ async def on_ready():
                 if rcon.login('1552'):
                     print("RCON Login Successful!")
                     
-                    #response = rcon.command('say Crazy Neil is watching....')
+                    response = rcon.command('say Crazy Neil is watching....')
                     
                     #print(f"Response: {response}")
                     
@@ -123,8 +123,9 @@ async def on_ready():
                 await asyncio.sleep(300)
         
         
+    print("-" * 80)
     print(f'\n\nLogged in as {client.user}')
-    
+
     try:
         checkPlaytime.start()
             
@@ -136,10 +137,12 @@ async def on_ready():
     try:
         synced = await client.tree.sync()
         
-        print(f"Synced {len(synced)} command(s)")
+        print(f"\nSynced {len(synced)} command(s)")
     
     except Exception as e:
         print(e)
+        
+    print("-" * 80)
     
     #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
     
@@ -158,21 +161,19 @@ async def change_status():
     
 
 def updatePlaytime(username, additionalMinutes, reset = False):
-        
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
         data = list(csvReader)
     
     for row in data:
-        print(row)
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
             print(f"Reset {username}'s minutes.")
         
         elif row["username"] == username and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            print(f"Increased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)")
+            print(f"\nIncreased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)")
             
         break
     
@@ -202,8 +203,6 @@ async def checkPlaytime():
             for player in playerList:
 
                 if ".mattcur" in player:
-                    
-                    print("Updating hours for .mattcur")
                     
                     updatePlaytime(".mattcur", 10)
                     
