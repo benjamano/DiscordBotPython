@@ -2,7 +2,6 @@ import discord
 import random
 import datetime
 import discord.context_managers
-from mcstatus import JavaServer as MC
 from itertools import cycle
 from discord.ext import commands, tasks
 from discord import app_commands
@@ -80,10 +79,9 @@ print(f"{Version}")
 @client.event
 async def on_ready():
     
-    global status, server, ServerConn, RCONConnection
+    global status, server, ServerConn
     
     ServerConn = False
-    RCONConnection = False
     
     print(f'\nPing: {round(client.latency * 1000)}ms')
     
@@ -91,72 +89,41 @@ async def on_ready():
     
     tries = 0
     
-    while ServerConn == False and RCONConnection == False:
+    while ServerConn == False:
+        try:
+            if localConnection == 'True':
+                print(f"Attempting to connect to server at IP {ServerIP}:{PORT}")
+                
+                try:
+                    rcon = RCONClient(str(ServerIP), port=PORT)
+                    
+                    if rcon.login(str(code)):
+                        print("RCON Login Successful!")
+                        
+                        response = rcon.command('Crazy Neil is watching....')
+                        
+                        print(f"Response: {response}")
+                        
+                    else:
+                        print("RCON Login Failed.")
+                        
+                except Exception as e:
+                    
+                    print(f"RCON Error: {e}")
         
-        if tries > 4:
-            #print("Cannot connect to server after 5 Tries. Trying again every 5 minutes.")
+        except Exception as e:
             
-            try:
-                server = MC.lookup(ServerIP)
-                status = server.status()
-                
-                if localConnection == 'True':
-                
-                    try:
-                        rcon = RCONClient('127.0.0.1', port=25575)
-                        if rcon.login('1552'):
-                            print("RCON Login Successful!")
-                            response = rcon.command('say Test command from RCON')
-                            print(f"Response: {response}")
-                        else:
-                            print("RCON Login Failed.")
-                    except Exception as e:
-                        print(f"RCON Error: {e}")
-                
-                if status:
-                    ServerConn = True
-        
-            except Exception as e:
-                print(f"Couldn't connect to server, probably starting, waiting for 5 minutes. ({e})\nTries: ", tries)  
-                tries += 1
+            tries += 1
+            
+            if tries > 4:
+                print(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})")
                 await asyncio.sleep(300)
             
-        else:
+            else:
+                print(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})\nTries: ", tries)  
+                await asyncio.sleep(300)
         
-            try:
-                server = MC.lookup(ServerIP)
-                status = server.status()
-                
-                if localConnection == 'True':
-                
-                    try:
-                        rcon = RCONClient('127.0.0.1', port=25575)
-                        if rcon.login('1552'):
-                            print("RCON Login Successful!")
-                            response = rcon.command('say Test command from RCON')
-                            print(f"Response: {response}")
-                            RCONConnection = True
-                        else:
-                            print("RCON Login Failed.")
-                    except Exception as e:
-                        print(f"RCON Error: {e}")
-                
-                if status:
-                    ServerConn = True
-
-                print(RCONConnection )
         
-            except Exception as e:
-                print(f"Couldn't connect to server, probably starting, waiting for 1 minute ({e}).\nTries: ", tries)
-                tries += 1
-                await asyncio.sleep(60)
-            
-    try:
-        resp = rcon.command("say Crazy Neil is watching....")
-    
-    except Exception as e:
-        print(f"Couldnt send message to server, probably not connected: {e}")
-
     print(f'\n\nLogged in as {client.user}')
     
     try:
