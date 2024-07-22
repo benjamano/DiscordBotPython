@@ -100,9 +100,9 @@ async def on_ready():
                 if rcon.login('1552'):
                     print("RCON Login Successful!")
                     
-                    response = rcon.command('say Crazy Neil is watching....')
+                    #response = rcon.command('say Crazy Neil is watching....')
                     
-                    print(f"Response: {response}")
+                    #print(f"Response: {response}")
                     
                     ServerConn = True
                 
