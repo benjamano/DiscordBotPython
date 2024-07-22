@@ -79,7 +79,7 @@ print(f"{Version}")
 @client.event
 async def on_ready():
     
-    global status, server, ServerConn
+    global ServerConn, rcon
     
     ServerConn = False
     
@@ -184,14 +184,20 @@ def updatePlaytime(username, additionalMinutes, reset = False):
 @tasks.loop(seconds=600)
 async def checkPlaytime():
     TrackingPlayersOnline = []
-    status = server.status()
     
-    if status.players.sample is not None:
-        for player in status.players.sample:
-            TrackingPlayersOnline.append(player.name)
+    # Connect to the RCON client and get player list
+    try:
+        rcon.connect()
+        response = rcon.run("list")
+        rcon.close()
         
+        if "players online:" in response:
+            player_list = response.split("players online:")[1].strip()
+            if player_list:
+                TrackingPlayersOnline = [player.strip() for player in player_list.split(",")]
+
         if ".mattcur" in TrackingPlayersOnline:
-            updatePlaytime(".mattcur", 10) 
+            updatePlaytime(".mattcur", 10)
             
             with open("hours.csv", mode="r") as csvf:
                 csvReader = csv.DictReader(csvf)
@@ -199,7 +205,6 @@ async def checkPlaytime():
                 for row in csvReader:
                     if row['username'] == ".mattcur":
                         playerPlaytime = int(row['minutesplayed'])
-                        
                         break
             
             if playerPlaytime > 360:
@@ -207,10 +212,10 @@ async def checkPlaytime():
                 
                 user = client.get_user(707634111627395222)
                 
-                await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=allowed_mentions)
+                await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
     
-    else:
-        print("No players online")
+    except Exception as e:
+        print(f"An error occurred: {e}")
         
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
@@ -226,7 +231,7 @@ async def resetPlaytime():
 @client.command()
 async def playersonline(ctx):
     
-    if ServerConn == False or RCONConnection == False:
+    if ServerConn == False:
         embed = discord.Embed(
             title = "No Connection",
             description = f"Connection to server is unavailable, please try again later.",
@@ -240,15 +245,22 @@ async def playersonline(ctx):
     else:
         try:
             PlayersOn = ""
-            
-            status = server.status()
-            
+
             try:
-                for player in status.players.sample:
-                    PlayersOn += str(f"- {player.name}\n")
+                rcon.connect()
+                response = rcon.run("list")
+                rcon.close()
+                
+                if "players online:" in response:
+                    playerList = response.split("players online:")[1].strip()
+                    if playerList:
+                        PlayersOn = [player.strip() for player in playerList.split("\n -")]
+                
+                else:
+                    PlayersOn = "No players online"
             
-            except:
-                PlayersOn = "Nobody!"
+            except Exception as e:
+                print(f"Error getting players online: {e}")
                 
             embed = discord.Embed(
                 title = "Players Online",
@@ -259,7 +271,7 @@ async def playersonline(ctx):
             await ctx.send(embed=embed)
             
         except Exception as e:
-            print(f"Error running Players online commande: {e}")
+            print(f"Error running Players online command: {e}")
 
 
 @client.tree.command(name="totalplaytime")
