@@ -201,34 +201,32 @@ async def checkPlaytime():
 
         qry.stop()
         
-        for player in playerList:
-            if ".mattcur" in player:
-                print("True")
-            else:
-                print("False ",player, type(player))
+        if len(playerList) > 0:
+        
+            for player in playerList:
 
-        if ".mattcur" in playerList:
-            
-            print("Updating hours for .mattcur")
-            
-            updatePlaytime(".mattcur", 10)
-            
-            with open("hours.csv", mode="r") as csvf:
-                csvReader = csv.DictReader(csvf)
-                
-                print("Checking playtime for .mattcur")
-                
-                for row in csvReader:
-                    if row['username'] == ".mattcur":
-                        playerPlaytime = int(row['minutesplayed'])
-                        print(playerPlaytime)
-                        break
-            
-            if playerPlaytime > 360:
-                channel = client.get_channel(RandStuffGeneralID)
-                user = client.get_user(707634111627395222)
-                await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
-                
+                if ".mattcur" in player:
+                    
+                    print("Updating hours for .mattcur")
+                    
+                    updatePlaytime(".mattcur", 10)
+                    
+                    with open("hours.csv", mode="r") as csvf:
+                        csvReader = csv.DictReader(csvf)
+                        
+                        print("Checking playtime for .mattcur")
+                        
+                        for row in csvReader:
+                            if row['username'] == ".mattcur":
+                                playerPlaytime = int(row['minutesplayed'])
+                                print(playerPlaytime)
+                                break
+                    
+                    if playerPlaytime > 360:
+                        channel = client.get_channel(RandStuffGeneralID)
+                        user = client.get_user(707634111627395222)
+                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+        
         else:
             print("No players to update")
     
