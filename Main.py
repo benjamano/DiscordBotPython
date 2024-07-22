@@ -247,6 +247,8 @@ async def playersonline(ctx):
 
             stats = qry.get_full_stats()
             
+            print(stats)
+            
             if 'players' in stats and 'sample' in stats['players']:
                 player_list = stats['players']['sample']
                 if player_list:
