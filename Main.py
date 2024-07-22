@@ -237,11 +237,11 @@ async def resetPlaytime():
 
 
     
-@client.command()
-async def playersonline(ctx):
-    
+@client.tree.command()
+async def playersonline(interaction: discord.Interaction):
     if ServerConn == False:
         embed = discord.Embed(
+            
             title = "No Connection",
             description = f"Connection to server is unavailable, please try again later.",
             colour = discord.Colour.red()
@@ -249,7 +249,7 @@ async def playersonline(ctx):
         
         embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Minecraft Server')
         
-        await ctx.send(embed=embed) 
+        await interaction.response.send_message(embed=embed,ephemeral=False)
     
     else:
         try:
@@ -279,7 +279,7 @@ async def playersonline(ctx):
                 colour=discord.Colour.green()
             )
             
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed,ephemeral=False)
         
         except Exception as e:
             print(f"Error running Players online command: {e}")
@@ -288,34 +288,11 @@ async def playersonline(ctx):
                 description="An error occurred while trying to retrieve the list of players.",
                 colour=discord.Colour.red()
             )
-            await ctx.send(embed=embed)
+            await interaction.response.send_message(embed=embed,ephemeral=False)
 
 
 @client.tree.command(name="totalplaytime")
 async def totalplaytime(interaction: discord.Interaction):
-    with open("hours.csv", mode="r") as csvf:
-        csvReader = csv.DictReader(csvf)
-        
-        data = list(csvReader)
-        
-        playTime = ""
-        
-        for row in data:
-            playTime += str(f"- {row['username']} has played for {row['minutesplayed']} minutes\n")
-        
-        embed = discord.Embed(
-            title = "Total Playtime for each player",
-            description = f"Playtime: \n{playTime}",
-            colour = discord.Colour.green()
-        )
-        
-        csvf.close()
-        
-        await interaction.response.send_message(embed=embed,ephemeral=False)
-        
-
-@client.command(name="totalplaytime")
-async def totalplaytime_prefix(interaction: discord.Interaction):
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
