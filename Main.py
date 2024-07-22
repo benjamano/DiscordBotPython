@@ -397,16 +397,16 @@ async def howgay(ctx):
     await ctx.send(f'{random.choice(responses)}')
 
 #To use this command, in discord type: "oioi dm [user's @] [message]" e.g. "oioi dm @benjamano hello"
-@client.command(aliases=['dm'])
-async def DM(ctx, user : discord.User, *, msg):
-    try:
-        await user.send(msg)
+# @client.command(aliases=['dm'])
+# async def DM(ctx, user : discord.User, *, msg):
+#     try:
+#         await user.send(msg)
         
-        await ctx.send(f':white_check_mark: Your Message has been sent')
+#         await ctx.send(f':white_check_mark: Your Message has been sent')
         
-        print(msg, "sent to", user,)
-    except:
-        await ctx.send(':x: Member had their DMs closed, message not sent')
+#         print(msg, "sent to", user,)
+#     except:
+#         await ctx.send(':x: Member had their DMs closed, message not sent')
 
 
 
