@@ -206,7 +206,7 @@ async def checkPlaytime():
             if player == ".mattcur":
                 print("True")
             else:
-                print("False ",player)
+                print("False ",player, type(player))
 
         if ".mattcur" in playerList:
             
