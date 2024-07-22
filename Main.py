@@ -71,7 +71,7 @@ print("""
 ╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
 ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
 
-print(f"Version {Version}")
+print(f"Version {Version}\n")
 
 
 #slash = client.create_group("credits")
@@ -123,8 +123,8 @@ async def on_ready():
                 await asyncio.sleep(300)
         
         
-    print("-" * 80)
-    print(f'\n\nLogged in as {client.user}')
+    print("-" * 120)
+    print(f'\nLogged in as {client.user}')
 
     try:
         checkPlaytime.start()
@@ -137,12 +137,12 @@ async def on_ready():
     try:
         synced = await client.tree.sync()
         
-        print(f"\nSynced {len(synced)} command(s)")
+        print(f"\nSynced {len(synced)} command(s)\n")
     
     except Exception as e:
         print(e)
         
-    print("-" * 80)
+    print("-" * 120)
     
     #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
     
