@@ -42,7 +42,7 @@ token = 'nul'
 
 intents = discord.Intents.all()
 
-client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(), help_command=None, case_insensitive = False) # Sets the command prefix to the string 'oioi'
+client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(), help_command=None, case_insensitive = True) # Sets the command prefix to the string 'oioi'
 
 allowed_mentions = discord.AllowedMentions(everyone = True)
 
@@ -53,7 +53,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.2.4"
+Version = "2.2.4.2"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -94,7 +94,7 @@ async def on_ready():
     while ServerConn == False and RCONConnection == False:
         
         if tries > 4:
-            print("Cannot connect to server after 5 Tries. Trying again every 5 minutes.")
+            #print("Cannot connect to server after 5 Tries. Trying again every 5 minutes.")
             
             try:
                 server = MC.lookup(ServerIP)
@@ -254,7 +254,7 @@ async def playersonline(ctx):
             colour = discord.Colour.red()
         )
         
-        embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Mincraft Server')
+        embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Minecraft Server')
         
         await ctx.send(embed=embed) 
     
