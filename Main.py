@@ -201,6 +201,12 @@ async def checkPlaytime():
             playerList = stats['players']
 
         qry.stop()
+        
+        for player in playerList:
+            if player == ".mattcur":
+                print("True")
+            else:
+                print("False ",player)
 
         if ".mattcur" in playerList:
             
