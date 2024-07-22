@@ -303,8 +303,8 @@ async def totalplaytime(interaction: discord.Interaction):
             playTime += str(f"- {row['username']} has played for {int(row['minutesplayed'])/60} hours ({row['minutesplayed']} minutes)\n")
         
         embed = discord.Embed(
-            title = "Total Playtime for each player",
-            description = f"Playtime: \n{playTime}",
+            title = "Total Playtime for each player today",
+            description = f"Playtime today: \n{playTime}",
             colour = discord.Colour.green()
         )
         
