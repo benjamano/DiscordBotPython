@@ -191,7 +191,6 @@ async def checkPlaytime():
 
         stats = qry.get_full_stats()
         
-        # Extract player list from the stats
         if 'players' in stats and 'sample' in stats['players']:
             player_list = stats['players']['sample']
             TrackingPlayersOnline = [player['name'] for player in player_list]
@@ -244,34 +243,37 @@ async def playersonline(ctx):
     
     else:
         try:
-            PlayersOn = ""
+            qry.start()
 
-            try:
-                rcon.start()
-                response = rcon.run("list")
-                rcon.stop()
-                
-                if "players online:" in response:
-                    playerList = response.split("players online:")[1].strip()
-                    if playerList:
-                        PlayersOn = [player.strip() for player in playerList.split("\n -")]
-                
+            stats = qry.get_full_stats()
+            
+            if 'players' in stats and 'sample' in stats['players']:
+                player_list = stats['players']['sample']
+                if player_list:
+                    PlayersOn = "\n".join([player['name'] for player in player_list])
                 else:
                     PlayersOn = "No players online"
+            else:
+                PlayersOn = "No players online"
             
-            except Exception as e:
-                print(f"Error getting players online: {e}")
-                
+            qry.stop()
+            
             embed = discord.Embed(
-                title = "Players Online",
-                description = f"Players Online: \n{PlayersOn}",
-                colour = discord.Colour.green()
+                title="Players Online",
+                description=f"Players Online:\n{PlayersOn}",
+                colour=discord.Colour.green()
             )
             
             await ctx.send(embed=embed)
-            
+        
         except Exception as e:
             print(f"Error running Players online command: {e}")
+            embed = discord.Embed(
+                title="Error",
+                description="An error occurred while trying to retrieve the list of players.",
+                colour=discord.Colour.red()
+            )
+            await ctx.send(embed=embed)
 
 
 @client.tree.command(name="totalplaytime")
