@@ -157,12 +157,18 @@ async def change_status():
     
 
 def updatePlaytime(username, additionalMinutes, reset = False):
+    
+    print("Updating playtime blah blah blah")
+    
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
         data = list(csvReader)
+        
+    print(data)
     
     for row in data:
+        print(row)
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
             print(f"Reset {username}'s minutes.")
@@ -208,14 +214,20 @@ async def checkPlaytime():
         qry.stop()
 
         if ".mattcur" in TrackingPlayersOnline:
+            
+            print("Updating hours for .mattcur")
+            
             updatePlaytime(".mattcur", 10)
             
             with open("hours.csv", mode="r") as csvf:
                 csvReader = csv.DictReader(csvf)
                 
+                print("Checking playtime for .mattcur")
+                
                 for row in csvReader:
                     if row['username'] == ".mattcur":
                         playerPlaytime = int(row['minutesplayed'])
+                        print(playerPlaytime)
                         break
             
             if playerPlaytime > 360:
