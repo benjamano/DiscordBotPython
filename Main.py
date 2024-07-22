@@ -190,8 +190,6 @@ def updatePlaytime(username, additionalMinutes, reset = False):
 
 @tasks.loop(seconds=600)
 async def checkPlaytime():
-    TrackingPlayersOnline = []
-    
     try:
         qry.start()
 
@@ -203,7 +201,7 @@ async def checkPlaytime():
         qry.stop()
         
         for player in playerList:
-            if player == ".mattcur":
+            if player == (".mattcur".strip()):
                 print("True")
             else:
                 print("False ",player, type(player))
