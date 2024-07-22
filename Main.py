@@ -234,6 +234,9 @@ async def checkPlaytime():
                 channel = client.get_channel(RandStuffGeneralID)
                 user = client.get_user(707634111627395222)
                 await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+                
+        else:
+            print("No players to update")
     
     except Exception as e:
         print(f"An error occurred: {e}")
