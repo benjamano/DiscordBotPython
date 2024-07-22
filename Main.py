@@ -201,6 +201,9 @@ async def checkPlaytime():
                 TrackingPlayersOnline.append(player)
         
         print(playerList)
+        
+        for player in playerList:
+            print(player)
 
         qry.stop()
 
