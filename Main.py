@@ -313,6 +313,29 @@ async def totalplaytime(interaction: discord.Interaction):
         
         await interaction.response.send_message(embed=embed,ephemeral=False)
         
+
+@client.command(name="totalplaytime")
+async def totalplaytime_prefix(interaction: discord.Interaction):
+    with open("hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf)
+        
+        data = list(csvReader)
+        
+        playTime = ""
+        
+        for row in data:
+            playTime += str(f"- {row['username']} has played for {row['minutesplayed']} minutes\n")
+        
+        embed = discord.Embed(
+            title = "Total Playtime for each player",
+            description = f"Playtime: \n{playTime}",
+            colour = discord.Colour.green()
+        )
+        
+        csvf.close()
+        
+        await interaction.response.send_message(embed=embed,ephemeral=False)
+        
         
 @client.command(description="Displays the credits")
 async def credits(ctx):
