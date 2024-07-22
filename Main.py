@@ -194,10 +194,14 @@ async def checkPlaytime():
         if 'players' in stats:
             print("Im here")
             playerList = stats['players']
-            print("Got Here")
-            TrackingPlayersOnline = [player['name'] for player in playerList]
+            print("Got Here,",playerList)
+            
+            for player in playerList:
+            
+                TrackingPlayersOnline.append((player))
         
         print(playerList)
+        print(TrackingPlayersOnline)
 
         qry.stop()
 
