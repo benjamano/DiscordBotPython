@@ -124,8 +124,8 @@ async def on_ready():
         else:
         
             try:
-                #server = MC.lookup(ServerIP)
-                #status = server.status()
+                server = MC.lookup(ServerIP)
+                status = server.status()
                 
                 if localConnection == 'True':
                 
@@ -135,13 +135,14 @@ async def on_ready():
                             print("RCON Login Successful!")
                             response = rcon.command('say Test command from RCON')
                             print(f"Response: {response}")
+                            RCONConnection = True
                         else:
                             print("RCON Login Failed.")
                     except Exception as e:
                         print(f"RCON Error: {e}")
                 
-                #if status:
-                    #ServerConn = True
+                if status:
+                    ServerConn = True
 
                 print(RCONConnection )
         
