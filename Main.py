@@ -266,7 +266,7 @@ async def playersonline(ctx):
             
             if len(playerList) > 0:
                 for player in playerList:
-                    PlayersOn += f"- {player}\n"
+                    PlayersOn += f"- ({player.strip("[0m")}\n"
                     
             else:
                 PlayersOn = "No players online"
