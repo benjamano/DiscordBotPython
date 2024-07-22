@@ -197,8 +197,10 @@ async def checkPlaytime():
             print("Got Here,",playerList)
             
             for player in playerList:
+                
+                print(player)
             
-                TrackingPlayersOnline.append((str(player).strip(r"\\x1b[0m")))
+                TrackingPlayersOnline.append(((str(player).strip(r"[0m")).strip(r"\")))
         
         print(playerList)
         print(TrackingPlayersOnline)
