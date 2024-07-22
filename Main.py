@@ -158,15 +158,11 @@ async def change_status():
     
 
 def updatePlaytime(username, additionalMinutes, reset = False):
-    
-    print("Updating playtime blah blah blah")
-    
+        
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
         data = list(csvReader)
-        
-    print(data)
     
     for row in data:
         print(row)
@@ -176,7 +172,7 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         
         elif row["username"] == username and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            print(f"Increased {username}'s minutes played by {additionalMinutes}\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)")
+            print(f"Increased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)")
             
         break
     
@@ -214,12 +210,9 @@ async def checkPlaytime():
                     with open("hours.csv", mode="r") as csvf:
                         csvReader = csv.DictReader(csvf)
                         
-                        print("Checking playtime for .mattcur")
-                        
                         for row in csvReader:
                             if row['username'] == ".mattcur":
                                 playerPlaytime = int(row['minutesplayed'])
-                                print(playerPlaytime)
                                 break
                     
                     if playerPlaytime > 360:
@@ -264,14 +257,17 @@ async def playersonline(ctx):
 
             stats = qry.get_full_stats()
             
-            print(stats)
+            if 'players' in stats:
+                playerList = stats['players']
+
+            qry.stop()
             
-            if 'players' in stats and 'sample' in stats['players']:
-                player_list = stats['players']['sample']
-                if player_list:
-                    PlayersOn = "\n".join([player['name'] for player in player_list])
-                else:
-                    PlayersOn = "No players online"
+            PlayersOn = ""
+            
+            if len(playerList) > 0:
+                for player in playerList:
+                    PlayersOn += f"- {player}\n"
+                    
             else:
                 PlayersOn = "No players online"
             
