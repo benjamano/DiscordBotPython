@@ -191,9 +191,11 @@ async def checkPlaytime():
 
         stats = qry.get_full_stats()
         
-        if 'players' in stats and 'sample' in stats['players']:
-            player_list = stats['players']['sample']
-            TrackingPlayersOnline = [player['name'] for player in player_list]
+        if 'players' in stats:
+            playerList = stats['players']
+            TrackingPlayersOnline = [player['name'] for player in playerList]
+        
+        print(playerList)
 
         qry.stop()
 
