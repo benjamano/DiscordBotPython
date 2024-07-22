@@ -102,10 +102,16 @@ async def on_ready():
                 
                 if localConnection == 'True':
                 
-                    rcon = RCONClient(ServerIP, port=PORT)
-
-                    if rcon.login(str(code)):
-                        RCONConnection = True
+                    try:
+                        rcon = RCONClient('127.0.0.1', port=25575)
+                        if rcon.login('1552'):
+                            print("RCON Login Successful!")
+                            response = rcon.command('say Test command from RCON')
+                            print(f"Response: {response}")
+                        else:
+                            print("RCON Login Failed.")
+                    except Exception as e:
+                        print(f"RCON Error: {e}")
                 
                 if status:
                     ServerConn = True
@@ -123,10 +129,16 @@ async def on_ready():
                 
                 if localConnection == 'True':
                 
-                    rcon = RCONClient(ServerIP, port=PORT)
-
-                    if rcon.login(str(code)):
-                        RCONConnection = True
+                    try:
+                        rcon = RCONClient('127.0.0.1', port=25575)
+                        if rcon.login('1552'):
+                            print("RCON Login Successful!")
+                            response = rcon.command('say Test command from RCON')
+                            print(f"Response: {response}")
+                        else:
+                            print("RCON Login Failed.")
+                    except Exception as e:
+                        print(f"RCON Error: {e}")
                 
                 if status:
                     ServerConn = True
