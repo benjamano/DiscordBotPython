@@ -187,9 +187,9 @@ async def checkPlaytime():
     
     # Connect to the RCON client and get player list
     try:
-        rcon.connect()
+        rcon.start()
         response = rcon.run("list")
-        rcon.close()
+        rcon.stop()
         
         if "players online:" in response:
             player_list = response.split("players online:")[1].strip()
@@ -247,9 +247,9 @@ async def playersonline(ctx):
             PlayersOn = ""
 
             try:
-                rcon.connect()
+                rcon.start()
                 response = rcon.run("list")
-                rcon.close()
+                rcon.stop()
                 
                 if "players online:" in response:
                     playerList = response.split("players online:")[1].strip()
@@ -295,6 +295,7 @@ async def totalplaytime(interaction: discord.Interaction):
         csvf.close()
         
         await interaction.response.send_message(embed=embed,ephemeral=False)
+        
         
 @client.command(description="Displays the credits")
 async def credits(ctx):
