@@ -125,7 +125,7 @@ async def on_ready():
         
             try:
                 #server = MC.lookup(ServerIP)
-                status = server.status()
+                #status = server.status()
                 
                 if localConnection == 'True':
                 
@@ -140,8 +140,10 @@ async def on_ready():
                     except Exception as e:
                         print(f"RCON Error: {e}")
                 
-                if status:
-                    ServerConn = True
+                #if status:
+                    #ServerConn = True
+
+                print(RCONConnection )
         
             except Exception as e:
                 print(f"Couldn't connect to server, probably starting, waiting for 1 minute ({e}).\nTries: ", tries)
