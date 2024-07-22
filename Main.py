@@ -198,22 +198,11 @@ async def checkPlaytime():
         stats = qry.get_full_stats()
         
         if 'players' in stats:
-            print("Im here")
             playerList = stats['players']
-            print("Got Here,",playerList)
-            
-            for player in playerList:
-                
-                TrackingPlayersOnline.append(player)
-        
-        print(playerList)
-        
-        for player in playerList:
-            print(player)
 
         qry.stop()
 
-        if ".mattcur" in TrackingPlayersOnline:
+        if ".mattcur" in playerList:
             
             print("Updating hours for .mattcur")
             
