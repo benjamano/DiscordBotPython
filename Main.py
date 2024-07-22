@@ -6,7 +6,7 @@ from itertools import cycle
 from discord.ext import commands, tasks
 from discord import app_commands
 import asyncio
-from mctools import RCONClient 
+from mctools import RCONClient, QUERYClient 
 import csv
 
 with open("clientkey.txt", "r") as f:
@@ -79,7 +79,7 @@ print(f"{Version}")
 @client.event
 async def on_ready():
     
-    global ServerConn, rcon
+    global ServerConn, rcon, qry
     
     ServerConn = False
     
@@ -94,7 +94,8 @@ async def on_ready():
             if localConnection == 'True':
                 print(f"Attempting to connect to server at IP {ServerIP}:{PORT}")
             
-                rcon = RCONClient('127.0.0.1', port='25575')
+                rcon = RCONClient('127.0.0.1', port=25575)
+                qry = QUERYClient(host='127.0.0.1', port=25565)
                 
                 if rcon.login('1552'):
                     print("RCON Login Successful!")
@@ -185,16 +186,17 @@ def updatePlaytime(username, additionalMinutes, reset = False):
 async def checkPlaytime():
     TrackingPlayersOnline = []
     
-    # Connect to the RCON client and get player list
     try:
-        rcon.start()
-        response = rcon.run("list")
-        rcon.stop()
+        qry.start()
+
+        stats = qry.get_full_stats()
         
-        if "players online:" in response:
-            player_list = response.split("players online:")[1].strip()
-            if player_list:
-                TrackingPlayersOnline = [player.strip() for player in player_list.split(",")]
+        # Extract player list from the stats
+        if 'players' in stats and 'sample' in stats['players']:
+            player_list = stats['players']['sample']
+            TrackingPlayersOnline = [player['name'] for player in player_list]
+
+        qry.stop()
 
         if ".mattcur" in TrackingPlayersOnline:
             updatePlaytime(".mattcur", 10)
@@ -209,9 +211,7 @@ async def checkPlaytime():
             
             if playerPlaytime > 360:
                 channel = client.get_channel(RandStuffGeneralID)
-                
                 user = client.get_user(707634111627395222)
-                
                 await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
     
     except Exception as e:
