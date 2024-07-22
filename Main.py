@@ -124,7 +124,7 @@ async def on_ready():
         else:
         
             try:
-                server = MC.lookup(ServerIP)
+                #server = MC.lookup(ServerIP)
                 status = server.status()
                 
                 if localConnection == 'True':
