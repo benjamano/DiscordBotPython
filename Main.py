@@ -237,7 +237,7 @@ async def resetPlaytime():
 
 
     
-@client.tree.command()
+@client.tree.command(name="playersonline")
 async def playersonline(interaction: discord.Interaction):
     if ServerConn == False:
         embed = discord.Embed(
