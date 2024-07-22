@@ -300,7 +300,7 @@ async def totalplaytime(interaction: discord.Interaction):
         playTime = ""
         
         for row in data:
-            playTime += str(f"- {row['username']} has played for {row['minutesplayed']/60} hours ({row['minutesplayed']} minutes)\n")
+            playTime += str(f"- {row['username']} has played for {int(row['minutesplayed'])/60} hours ({row['minutesplayed']} minutes)\n")
         
         embed = discord.Embed(
             title = "Total Playtime for each player",
