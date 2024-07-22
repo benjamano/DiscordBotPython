@@ -102,9 +102,9 @@ async def on_ready():
                     response = rcon.command('Crazy Neil is watching....')
                     
                     print(f"Response: {response}")
-                    
+                
                 else:
-                    print("RCON Login Failed.")
+                    raise Exception("Server Connection Failed")
     
         except Exception as e:
             
