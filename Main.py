@@ -277,11 +277,11 @@ async def checkPlaytime():
                         
                         await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
                         
-                elif "Rugged_Base" in player:
+                elif "Rugged__Base" in player:
                     
-                    updatePlaytime("Rugged_Base", 10)
+                    updatePlaytime("Rugged__Base", 10)
                     
-                    result = checkPlaytimeCSV("Rugged_Base")
+                    result = checkPlaytimeCSV("Rugged__Base")
                      
                     if result[1]:
                         channel = client.get_channel(RandStuffGeneralID)
