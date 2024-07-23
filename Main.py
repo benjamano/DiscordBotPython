@@ -231,6 +231,8 @@ async def checkPlaytime():
         if len(playerList) > 0:
         
             for player in playerList:
+                
+                print(player+"\n")
 
                 if ".mattcur" in player:
                     
