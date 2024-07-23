@@ -238,71 +238,49 @@ async def checkPlaytime():
             for player in playerList:
 
                 if ".mattcur" in player:
-                    
                     updatePlaytime(".mattcur", 10)
                     
                     result = checkPlaytimeCSV(".mattcur")
-
-                    if result[1]:
-                        channel = client.get_channel(RandStuffGeneralID)
-                        
-                        user = client.get_user(707634111627395222)
-                        
-                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+                    
+                    user = client.get_user(707634111627395222)
                 
                 elif "Jedi_Maxster" in player:
-                    
                     updatePlaytime("Jedi_Maxster", 10)
                     
                     result = checkPlaytimeCSV("Jedi_Maxster")
                      
-                    if result[1]:
-                        channel = client.get_channel(RandStuffGeneralID)
-                        
-                        user = client.get_user(643840086114435082)
-                        
-                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+                    user = client.get_user(643840086114435082)
+
                 
                 elif "shortoctopus" in player:
-                    
                     updatePlaytime("shortoctopus", 10)
                     
                     result = checkPlaytimeCSV("shortoctopus")
-                     
-                    if result[1]:
-                        channel = client.get_channel(RandStuffGeneralID)
-                        
-                        user = client.get_user(499289163342938112)
-                        
-                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+
+                    user = client.get_user(499289163342938112)
                         
                 elif "Rugged__Base" in player:
-                    
                     updatePlaytime("Rugged__Base", 10)
                     
                     result = checkPlaytimeCSV("Rugged__Base")
                      
-                    if result[1]:
-                        channel = client.get_channel(RandStuffGeneralID)
-                        
-                        user = client.get_user(496388477361979402)
-                        
-                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+                    user = client.get_user(496388477361979402)
                 
                 elif "Benjamano" in player:
-                    
                     updatePlaytime("Benjamano", 10)
                     
                     result = checkPlaytimeCSV("Benjamano")
-                     
-                    if result[1]:
+                        
+                    user = client.get_user(321317643099439104)
+                
+                if result[1]:
                         channel = client.get_channel(RandStuffGeneralID)
                         
-                        user = client.get_user(321317643099439104)
+                        print(f"{user} has been playing Minecraft for {round((result[0] / 60),1)} hours, notifying....")
                         
-                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
         else:
-            print("No players to update")
+            print("No players to update, none online")
     
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -386,7 +364,7 @@ async def totalplaytime(interaction: discord.Interaction):
         playTime = ""
         
         for row in data:
-            playTime += str(f"- {row['username']} has played for {round(int(row['minutesplayed'])/60)} hours ({row['minutesplayed']} minutes)\n")
+            playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
         
         embed = discord.Embed(
             title = "Total Playtime for each player today",
