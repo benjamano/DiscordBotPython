@@ -206,8 +206,6 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         elif str(username) in str(row["username"]) and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
             print(f"\nIncreased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)\n")
-            
-        break
     
     with open("hours.csv", mode="w", newline='') as csvf:
         fieldnames = ['username', 'minutesplayed']
