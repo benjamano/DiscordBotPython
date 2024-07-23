@@ -116,13 +116,19 @@ async def on_ready():
             
             tries += 1
             
-            if tries > 4:
+            if tries > 10:
+                print(f"Couldn't connect to server after 10 tries. Waiting for 30 Minutes. ({e})")
+                await asyncio.sleep(1800)
+            
+            elif tries > 4:
                 print(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})")
                 await asyncio.sleep(300)
             
             else:
                 print(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})\nTries: ", tries)  
                 await asyncio.sleep(60)
+            
+            print(f"Tries: {tries}\n")
     
     print("-" * 120)
     
