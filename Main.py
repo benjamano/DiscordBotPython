@@ -166,6 +166,8 @@ async def on_ready():
 
 
 def checkPlaytimeCSV(username):
+    
+    print("-" * 120)
 
     shame = False
     
