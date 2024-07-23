@@ -73,14 +73,6 @@ async def on_ready():
         
     print("-" * 120)
     print(f'\nLogged in as {client.user}')
-
-    try:
-        checkPlaytime.start()
-            
-        resetPlaytime.start()
-            
-    except Exception as e:
-        print("Failed to run a task:", e)
     
     try:
         synced = await client.tree.sync()
@@ -151,6 +143,16 @@ async def on_ready():
             
         csvf.close()
     
+    print("-" * 120)
+    
+    try:
+        checkPlaytime.start()
+            
+        resetPlaytime.start()
+            
+    except Exception as e:
+        print("Failed to run a task:", e)
+        
     print("-" * 120)
 
 
