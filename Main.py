@@ -181,19 +181,31 @@ async def change_status():
     
 
 def updatePlaytime(username, additionalMinutes, reset = False):
+    
+    print(f"Updating {username}'s playtime by {additionalMinutes} minutes")
+    
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
         data = list(csvReader)
+        
+    print(data)
     
     for row in data:
+        
+        print(row)
+        
+        print(row['username'], username)
+        print(row["username"] == username)
+        print(row["username"] in username)
+        
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
             print(f"Reset {username}'s minutes.")
         
-        elif row["username"] == username and reset == False:
+        elif str(username) in str(row["username"]) and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            print(f"\nIncreased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)")
+            print(f"\nIncreased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)\n")
             
         break
     
