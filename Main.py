@@ -15,6 +15,7 @@ with open("clientkey.txt", "r") as f:
     code = f.readline()
     fileServerIP = f.readline()
     localConnection = f.readline().strip('\n')
+    apiPassword = f.readline().strip('\n')
     
     f.close()
     
@@ -110,6 +111,9 @@ async def on_ready():
                 
                 else:
                     raise Exception("Server Connection Failed")
+            else:
+                print("Bot is starting outside of the network, skipping RCON connection.")
+                break
     
         except Exception as e:
             
@@ -224,6 +228,10 @@ def updatePlaytime(username, additionalMinutes, reset = False):
 @tasks.loop(seconds=600)
 async def checkPlaytime():
     try:
+        if ServerConn == False:
+            print("No server connection available, skipping playtime check.")
+            return
+        
         qry.start()
 
         stats = qry.get_full_stats()
@@ -283,7 +291,7 @@ async def checkPlaytime():
             print("No players to update, none online")
     
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred while checking playtime: {e}")
         
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
