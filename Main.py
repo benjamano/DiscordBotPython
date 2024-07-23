@@ -204,7 +204,7 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         data = list(csvReader)
 
     for row in data:   
-        print(f"is {username} in CSV? " + (row["username"] in username))
+        print(f"is {username} in CSV? " + str((row["username"] in username)))
         
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
