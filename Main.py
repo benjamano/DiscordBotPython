@@ -122,7 +122,7 @@ async def on_ready():
             
             else:
                 print(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})\nTries: ", tries)  
-                await asyncio.sleep(300)
+                await asyncio.sleep(60)
     
     print("-" * 120)
     
@@ -232,8 +232,6 @@ async def checkPlaytime():
         if len(playerList) > 0:
         
             for player in playerList:
-                
-                print(player+"\n")
 
                 if ".mattcur" in player:
                     
