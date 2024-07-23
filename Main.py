@@ -133,12 +133,12 @@ async def on_ready():
         
         for row in csvReader:
             if lineCount == 0:
-                print(f"Column names detected: {"| ".join(row)}")
+                print(f"Column names detected: {" | ".join(row)}")
                 lineCount += 1
                 
             else:
             
-                print(f"{row["username"]} has {row["minutesplayed"]} minutes played.\n")
+                print(f"\n{row["username"]} has {row["minutesplayed"]} minutes played.")
             lineCount += 1
             
         csvf.close()
@@ -146,6 +146,9 @@ async def on_ready():
     print("-" * 120)
     
     try:
+        
+        print("Attempting to start tasks")
+        
         checkPlaytime.start()
             
         resetPlaytime.start()
