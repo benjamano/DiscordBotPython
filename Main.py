@@ -166,9 +166,6 @@ async def on_ready():
 
 
 def checkPlaytimeCSV(username):
-    
-    print("-" * 120)
-
     shame = False
     
     with open("hours.csv", mode="r") as csvf:
@@ -184,6 +181,8 @@ def checkPlaytimeCSV(username):
     
     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
         shame = True
+    
+    print("-" * 120)
     
     return playerPlaytime, shame
 
