@@ -53,7 +53,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.2.6"
+Version = "2.2.7"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -151,6 +151,26 @@ async def on_ready():
         await channel.send(f" Succesfully Started @ {datetime.datetime.now()} \n {Version} ")
 
 
+def checkPlaytimeCSV(username):
+
+    shame = False
+    
+    with open("hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf)
+        
+        print("Searching for playtime of user:", username)
+        
+        for row in csvReader:
+            if row['username'] == username:
+                playerPlaytime = int(row['minutesplayed'])
+                print(f"Found {username} with {playerPlaytime} minutes played")
+                break
+    
+    if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
+        shame = True
+    
+    return playerPlaytime, shame
+
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
 
@@ -206,19 +226,28 @@ async def checkPlaytime():
                     
                     updatePlaytime(".mattcur", 10)
                     
-                    with open("hours.csv", mode="r") as csvf:
-                        csvReader = csv.DictReader(csvf)
-                        
-                        for row in csvReader:
-                            if row['username'] == ".mattcur":
-                                playerPlaytime = int(row['minutesplayed'])
-                                break
-                    
-                    if playerPlaytime > 360:
+                    result = checkPlaytimeCSV(".mattcur")
+
+                    if result[1]:
                         channel = client.get_channel(RandStuffGeneralID)
+                        
                         user = client.get_user(707634111627395222)
-                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(playerPlaytime / 60)} hours, please tell him to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
-        
+                        
+                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+                
+                elif "Jedi_Maxster" in player:
+                    
+                    updatePlaytime("Jedi_Maxster", 10)
+                    
+                    result = checkPlaytimeCSV("Jedi_Maxster")
+                     
+                    if result[1]:
+                        channel = client.get_channel(RandStuffGeneralID)
+                        
+                        user = client.get_user(643840086114435082)
+                        
+                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round(result[0] / 60)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+                     
         else:
             print("No players to update")
     
@@ -300,7 +329,7 @@ async def totalplaytime(interaction: discord.Interaction):
         playTime = ""
         
         for row in data:
-            playTime += str(f"- {row['username']} has played for {int(row['minutesplayed'])/60} hours ({row['minutesplayed']} minutes)\n")
+            playTime += str(f"- {row['username']} has played for {round(int(row['minutesplayed'])/60)} hours ({row['minutesplayed']} minutes)\n")
         
         embed = discord.Embed(
             title = "Total Playtime for each player today",
