@@ -59,7 +59,6 @@ print(f"Version {Version}\n")
 
 #slash = client.create_group("credits")
 
-
 @client.event
 async def on_ready():
     
@@ -312,13 +311,17 @@ async def checkPlaytime():
 @tasks.loop(time=datetime.time(hour=0, minute=0))
 async def resetPlaytime():
     updatePlaytime(".mattcur", 0, reset=True)
-    
+    updatePlaytime("Jedi_Maxster", 0, reset=True)
+    updatePlaytime("shortoctopus", 0, reset=True)
+    updatePlaytime("Rugged__Base", 0, reset=True)
+    updatePlaytime("Benjamano", 0, reset=True)
+
 
 
 #------------------------------------------------------| Commands |------------------------------------------------------#
 
 
-    
+
 @client.tree.command(name="playersonline")
 async def playersonline(interaction: discord.Interaction):
     if ServerConn == False:
