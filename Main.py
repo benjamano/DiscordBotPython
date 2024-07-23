@@ -18,23 +18,6 @@ with open("clientkey.txt", "r") as f:
     
     f.close()
     
-with open("hours.csv", mode="r") as csvf:
-    csvReader = csv.DictReader(csvf, ["username", "minutesplayed"])
-    
-    lineCount = 0
-    
-    for row in csvReader:
-        if lineCount == 0:
-            print(f"Column names: {", ".join(row)}")
-            lineCount += 1
-            
-        else:
-        
-            print(f"{row["username"]} has {row["minutesplayed"]} minutes played.\n")
-        lineCount += 1
-        
-    csvf.close()
-
 ServerIP = fileServerIP
 PORT = 25575
     
@@ -87,9 +70,36 @@ async def on_ready():
     print(f'\nPing: {round(client.latency * 1000)}ms')
     
     change_status.start()
+        
+    print("-" * 120)
+    print(f'\nLogged in as {client.user}')
+
+    try:
+        checkPlaytime.start()
+            
+        resetPlaytime.start()
+            
+    except Exception as e:
+        print("Failed to run a task:", e)
+    
+    try:
+        synced = await client.tree.sync()
+        
+        print(f"\nSynced {len(synced)} command(s)\n")
+    
+    except Exception as e:
+        print(e)
+        
+    print("-" * 120)
+    
+    #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
     
     tries = 0
     
+    channel = client.get_channel(TestServerID)
+    if channel:
+        await channel.send(f" Succesfully Started @ {datetime.datetime.now()} \n {Version} ")
+        
     while ServerConn == False:
         try:
             if localConnection == 'True':
@@ -121,34 +131,27 @@ async def on_ready():
             else:
                 print(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})\nTries: ", tries)  
                 await asyncio.sleep(300)
-        
-        
-    print("-" * 120)
-    print(f'\nLogged in as {client.user}')
-
-    try:
-        checkPlaytime.start()
-            
-        resetPlaytime.start()
-            
-    except Exception as e:
-        print("Failed to run a task:", e)
     
-    try:
-        synced = await client.tree.sync()
-        
-        print(f"\nSynced {len(synced)} command(s)\n")
-    
-    except Exception as e:
-        print(e)
-        
     print("-" * 120)
     
-    #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
+    with open("hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf, ["username", "minutesplayed"])
+        
+        lineCount = 0
+        
+        for row in csvReader:
+            if lineCount == 0:
+                print(f"Column names detected: {"| ".join(row)}")
+                lineCount += 1
+                
+            else:
+            
+                print(f"{row["username"]} has {row["minutesplayed"]} minutes played.\n")
+            lineCount += 1
+            
+        csvf.close()
     
-    channel = client.get_channel(TestServerID)
-    if channel:
-        await channel.send(f" Succesfully Started @ {datetime.datetime.now()} \n {Version} ")
+    print("-" * 120)
 
 
 def checkPlaytimeCSV(username):
@@ -188,16 +191,9 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         csvReader = csv.DictReader(csvf)
         
         data = list(csvReader)
-        
-    print(data)
-    
-    for row in data:
-        
-        print(row)
-        
-        print(row['username'], username)
-        print(row["username"] == username)
-        print(row["username"] in username)
+
+    for row in data:   
+        print(f"{username} is in CSV? " + row["username"] in username)
         
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
