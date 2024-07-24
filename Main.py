@@ -8,7 +8,6 @@ from discord import app_commands
 import asyncio
 from mctools import RCONClient, QUERYClient 
 import csv
-import requests
 
 with open("clientkey.txt", "r") as f:
     key = f.readline().strip('\n')
