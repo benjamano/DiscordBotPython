@@ -323,7 +323,7 @@ async def notifyPlaytime(ctx):
     await ctx.send(embed=embed)
     
     
-    await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
+    #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
 
 
 #------------------------------------------------------| Commands |------------------------------------------------------#
