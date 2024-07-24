@@ -8,7 +8,7 @@ from discord import app_commands
 import asyncio
 from mctools import RCONClient, QUERYClient 
 import csv
-import re
+import requests
 
 with open("clientkey.txt", "r") as f:
     key = f.readline().strip('\n')
@@ -16,13 +16,14 @@ with open("clientkey.txt", "r") as f:
     fileServerIP = f.readline()
     localConnection = f.readline().strip('\n')
     apiPassword = f.readline().strip('\n')
+    URLtoCall = f.readline().strip('\n')
+    APIUrl = f.readline().strip('\n')
+    CommandUrl = f.readline().strip('\n')
     
     f.close()
     
 ServerIP = fileServerIP
 PORT = 25575
-    
-token = 'nul'
 
 intents = discord.Intents.all()
 
@@ -37,7 +38,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.3"
+Version = "2.3.1"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -280,13 +281,7 @@ async def checkPlaytime():
                     result = checkPlaytimeCSV("Benjamano")
                         
                     user = client.get_user(321317643099439104)
-                
-                if result[1]:
-                        channel = client.get_channel(RandStuffGeneralID)
                         
-                        print(f"{user} has been playing Minecraft for {round((result[0] / 60),1)} hours, notifying....")
-                        
-                        await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
         else:
             print("No players to update, none online")
     
@@ -302,6 +297,33 @@ async def resetPlaytime():
     updatePlaytime("Rugged__Base", 0, reset=True)
     updatePlaytime("Benjamano", 0, reset=True)
 
+
+@tasks.loop(time=datetime.time(hour=19, minute=0))    
+async def notifyPlaytime(ctx):
+    channel = client.get_channel(RandStuffGeneralID)
+    
+    with open("hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf)
+        
+        data = list(csvReader)
+        
+        playTime = ""
+        
+        for row in data:
+            playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
+        
+        embed = discord.Embed(
+            title = "Total Playtime for each player today",
+            description = f"Playtime today: \n{playTime}",
+            colour = discord.Colour.green()
+        )
+        
+        csvf.close()
+        
+    await ctx.send(embed=embed)
+    
+    
+    await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
 
 
 #------------------------------------------------------| Commands |------------------------------------------------------#
@@ -407,6 +429,7 @@ async def ping(ctx):
 async def foo(interaction: discord.Interaction):
     await interaction.response.send_message("foo",ephemeral=True)
 
+
 #This command allows a user to ask a question to an 8ball and picks a random response.
 @client.command(aliases=['8ball','test'])
 async def _8ball(ctx):
@@ -451,6 +474,7 @@ async def _willyrate(ctx):
     await ctx.send(f'{random.choice(responses)}')
     #^ This picks and random statement to send as a response
 
+
 @client.command(aliases=['howgayami'])
 async def howgay(ctx):
     responses = ["Very",
@@ -463,6 +487,7 @@ async def howgay(ctx):
                 "James Charles 2.0",]
     
     await ctx.send(f'{random.choice(responses)}')
+
 
 #To use this command, in discord type: "oioi dm [user's @] [message]" e.g. "oioi dm @benjamano hello"
 # @client.command(aliases=['dm'])
