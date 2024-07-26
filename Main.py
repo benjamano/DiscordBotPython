@@ -388,7 +388,11 @@ async def resetPlaytime():
 async def help(interaction:discord.Interaction):
     #TODO: Add a help command that lists all the commands and their descriptions
     
-    pass
+    try:
+        pass
+    
+    except Exception as e:
+        sendLogMessage(f"Error running help command: {e}", type="Error")
 
 
 @client.event
@@ -403,17 +407,21 @@ async def on_command_error(ctx, error):
 
 @client.tree.command(name="playersonline")
 async def playersonline(interaction: discord.Interaction):
-    if ServerConn == False:
-        embed = discord.Embed(
-            
-            title = "No Connection",
-            description = f"Connection to server is unavailable, please try again later.",
-            colour = discord.Colour.red()
-        )
-        
-        embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Minecraft Server')
-        
-        await interaction.response.send_message(embed=embed,ephemeral=False)
+    try:
+        if ServerConn == False:
+                embed = discord.Embed(
+                    
+                    title = "No Connection",
+                    description = f"Connection to server is unavailable, please try again later.",
+                    colour = discord.Colour.red()
+                )
+                
+                embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Minecraft Server')
+                
+                await interaction.response.send_message(embed=embed,ephemeral=False)
+                
+    except: 
+        sendLogMessage(f"Couldn't send the 'No connection to server' message: {e}", type="Error")
     
     else:
         try:
@@ -447,25 +455,32 @@ async def playersonline(interaction: discord.Interaction):
         
         except Exception as e:
             sendLogMessage(f"Error running Players online command: {e}", type="Error")
-            embed = discord.Embed(
-                title="Error",
-                description="An error occurred while trying to retrieve the list of players.",
-                colour=discord.Colour.red()
-            )
-            await interaction.response.send_message(embed=embed,ephemeral=False)
+            
+            try:
+                
+                embed = discord.Embed(
+                    title="Error",
+                    description="An error occurred while trying to retrieve the list of players.",
+                    colour=discord.Colour.red()
+                )
+                await interaction.response.send_message(embed=embed,ephemeral=False)
+            
+            except Exception as e:
+                sendLogMessage(f"Error while sending error message via discord: {e}", type="Error")
 
 
 @client.tree.command(name="totalplaytime")
 async def totalplaytime(interaction: discord.Interaction):
-    with open("hours.csv", mode="r") as csvf:
-        csvReader = csv.DictReader(csvf)
-        
-        data = list(csvReader)
-        
-        playTime = ""
-        
-        for row in data:
-            playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
+    try:
+        with open("hours.csv", mode="r") as csvf:
+            csvReader = csv.DictReader(csvf)
+            
+            data = list(csvReader)
+            
+            playTime = ""
+            
+            for row in data:
+                playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
         
         embed = discord.Embed(
             title = "Total Playtime for each player today",
@@ -476,19 +491,26 @@ async def totalplaytime(interaction: discord.Interaction):
         csvf.close()
         
         await interaction.response.send_message(embed=embed,ephemeral=False)
+    
+    except Exception as e:
+        sendLogMessage(f"Error running total playtime command: {e}", type="Error")
         
         
 @client.command(description="Displays the credits")
 async def credits(ctx):
-    embed = discord.Embed(
-        title = 'Credits',
-        description = 'Coded by Ben Mercer',
-        colour = discord.Colour.blue()
-    )
-    
-    embed.set_footer(text = 'Thats literally just it')
+    try:
+        embed = discord.Embed(
+            title = 'Credits',
+            description = 'Coded by Ben Mercer',
+            colour = discord.Colour.blue()
+        )
+        
+        embed.set_footer(text = 'Thats literally just it')
 
-    await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
+        
+    except Exception as e:
+        sendLogMessage(f"Error running credits command: {e}", type="Error")
 
 
 @client.command()
@@ -502,7 +524,7 @@ async def foo(interaction: discord.Interaction):
 
 
 #This command allows a user to ask a question to an 8ball and picks a random response.
-@client.command(aliases=['8ball','test'])
+@client.command(aliases=['8ball'])
 async def _8ball(ctx):
     responses = ["It is certain.",
                 "It is decidedly so.",
