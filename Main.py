@@ -44,7 +44,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.3.1"
+Version = "2.4"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -100,7 +100,7 @@ async def on_ready():
     
     channel = client.get_channel(TestServerID)
     if channel:
-        await channel.send(f" Succesfully Started @ {datetime.datetime.now()} \n {Version} ")
+        await channel.send(f"```Succesfully Started @ {datetime.datetime.now()} \nVersion: {Version}```")
         
     while ServerConn == False:
         try:
@@ -193,7 +193,7 @@ def checkPlaytimeCSV(username):
         for row in csvReader:
             if row['username'] == username:
                 playerPlaytime = int(row['minutesplayed'])
-                sendLogMessage(f"Found {username} with {playerPlaytime} minutes played")
+                sendLogMessage(f"Found {username} with {playerPlaytime} minutes played", type="Success")
                 break
     
     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
@@ -382,6 +382,16 @@ async def resetPlaytime():
     #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
 #------------------------------------------------------| Commands |------------------------------------------------------#
 
+
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("Command not found. Please use a valid command. Use `/help` for a list of commands.")
+        sendLogMessage(f"{ctx.author} sent a command that doesn't exist: '{ctx.message.content}'", type="Error")
+    else:
+        await ctx.send("An error occurred. Please try again later.")
+        sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
 
 
 @client.tree.command(name="playersonline")
