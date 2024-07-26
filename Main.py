@@ -193,7 +193,7 @@ def checkPlaytimeCSV(username):
         for row in csvReader:
             if row['username'] == username:
                 playerPlaytime = int(row['minutesplayed'])
-                sendLogMessage(f"\n\tFound {username} with {playerPlaytime} minutes played")
+                sendLogMessage(f"Found {username} with {playerPlaytime} minutes played")
                 break
     
     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
@@ -219,7 +219,8 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         
         elif str(username) in str(row["username"]) and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)\n", type="Success", newline=True)
+            sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
+            sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)\n", type="Info")
     
     with open("hours.csv", mode="w", newline='') as csvf:
         fieldnames = ['username', 'minutesplayed']
@@ -272,7 +273,7 @@ async def change_status():
     await client.change_presence(activity=discord.Game(next(statuses)))
     
 
-@tasks.loop(time=datetime.time(hour=21, minute=59))    
+@tasks.loop(time=datetime.time(hour=22, minute=30))    
 async def notifyPlaytime():
     sendLogMessage("Notifying playtime...")
     
