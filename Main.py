@@ -44,7 +44,7 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.4"
+Version = "2.4.1"
 
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
@@ -382,6 +382,13 @@ async def resetPlaytime():
     #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
 #------------------------------------------------------| Commands |------------------------------------------------------#
 
+
+
+@client.tree.command(name="help")
+async def help(interaction:discord.Interaction):
+    #TODO: Add a help command that lists all the commands and their descriptions
+    
+    pass
 
 
 @client.event
