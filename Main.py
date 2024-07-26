@@ -297,8 +297,8 @@ async def resetPlaytime():
     updatePlaytime("Benjamano", 0, reset=True)
 
 
-@tasks.loop(time=datetime.time(hour=19, minute=0))    
-async def notifyPlaytime(ctx):
+@tasks.loop(time=datetime.time(hour=20, minute=0))    
+async def notifyPlaytime():
     channel = client.get_channel(RandStuffGeneralID)
     
     with open("hours.csv", mode="r") as csvf:
@@ -319,7 +319,7 @@ async def notifyPlaytime(ctx):
         
         csvf.close()
         
-    await ctx.send(embed=embed)
+    await channel.send(embed=embed)
     
     
     #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
