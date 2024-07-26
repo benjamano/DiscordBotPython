@@ -82,16 +82,22 @@ async def on_ready():
         
     newline()
     
-    sendLogMessage(f'Logged in as {client.user}', type="Success", newline=True)
+    newline(baronly=True)
+    
+    sendLogMessage(f'Logged in as {client.user}', type="Success")
+    
+    newline(baronly=True)
     
     try:
         synced = await client.tree.sync()
         
-        sendLogMessage(f"Synced {len(synced)} command(s)\n", type="Success", newline=True)
+        sendLogMessage(f"Synced {len(synced)} command(s)", type="Success")
     
     except Exception as e:
         sendLogMessage(f"Error syncing command tree: {e}", type="Error")
         
+    newline(baronly=True)
+    
     newline()
     
     #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
@@ -188,6 +194,8 @@ def checkPlaytimeCSV(username):
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
+        newline(baronly=True)
+        
         sendLogMessage(f"Searching for playtime of user: {username}")
         
         for row in csvReader:
@@ -215,7 +223,8 @@ def updatePlaytime(username, additionalMinutes, reset = False):
     for row in data:   
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
-            sendLogMessage(f"Reset {username}'s minutes.", type="Success", newline=True)
+            newline(baronly=True)
+            sendLogMessage(f"Reset {username}'s minutes.", type="Success")
         
         elif str(username) in str(row["username"]) and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
@@ -255,9 +264,14 @@ def sendLogMessage(message, type="Info", date=True, newline=False):
 
     print(messagetosend)
     
-def newline(withDivider=True):
+def newline(withDivider=True, baronly=False):
     
     """withdivider : defaults to true, if true, adds a divider ('+')."""
+    
+    if baronly:
+        print("\t\t    |")
+        
+        return
     
     if withDivider:
         print("-" * 20 + "+" + "-" * 100)
