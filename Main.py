@@ -24,6 +24,13 @@ with open("clientkey.txt", "r") as f:
 ServerIP = fileServerIP
 PORT = 25575
 
+colors = {
+        "Info": "\033[94m",    # Blue
+        "Warning": "\033[93m", # Yellow
+        "Error": "\033[91m",   # Red
+        "Success": "\033[92m"  # Green
+    }
+
 intents = discord.Intents.all()
 
 client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(), help_command=None, case_insensitive = True) # Sets the command prefix to the string 'oioi'
@@ -67,22 +74,25 @@ async def on_ready():
     
     ServerConn = False
     
-    print(f'\nPing: {round(client.latency * 1000)}ms')
+    newline()
+    
+    sendLogMessage(f'Ping: {round(client.latency * 1000)}ms')
     
     change_status.start()
         
-    print("-" * 120)
-    print(f'\nLogged in as {client.user}')
+    newline()
+    
+    sendLogMessage(f'Logged in as {client.user}', type="Success", newline=True)
     
     try:
         synced = await client.tree.sync()
         
-        print(f"\nSynced {len(synced)} command(s)\n")
+        sendLogMessage(f"Synced {len(synced)} command(s)\n", type="Success", newline=True)
     
     except Exception as e:
-        print(e)
+        sendLogMessage(f"Error syncing command tree: {e}", type="Error")
         
-    print("-" * 120)
+    newline()
     
     #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
     
@@ -101,7 +111,7 @@ async def on_ready():
                 qry = QUERYClient(host='127.0.0.1', port=25565)
                 
                 if rcon.login('1552'):
-                    print("RCON Login Successful!")
+                    sendLogMessage("RCON Login Successful!", type="Success")
                     
                     response = rcon.command('say Crazy Neil is watching....')
                     
@@ -112,7 +122,7 @@ async def on_ready():
                 else:
                     raise Exception("Server Connection Failed")
             else:
-                print("Bot is starting outside of the network, skipping RCON connection.")
+                sendLogMessage("Bot is starting outside of the network, skipping RCON connection.", type="Warning")
                 break
     
         except Exception as e:
@@ -120,20 +130,20 @@ async def on_ready():
             tries += 1
             
             if tries > 10:
-                print(f"Couldn't connect to server after 10 tries. Waiting for 30 Minutes. ({e})")
+                sendLogMessage(f"Couldn't connect to server after 10 tries. Waiting for 30 Minutes. ({e})", type="Error")
                 await asyncio.sleep(1800)
             
             elif tries > 4:
-                print(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})")
+                sendLogMessage(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})", type="Warning")
                 await asyncio.sleep(300)
             
             else:
-                print(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})\nTries: ", tries)  
+                sendLogMessage(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})", type="Warning")  
                 await asyncio.sleep(60)
             
-            print(f"Tries: {tries}\n")
+            sendLogMessage(f"Tries: {tries}\n")
     
-    print("-" * 120)
+    newline()
     
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf, ["username", "minutesplayed"])
@@ -142,30 +152,34 @@ async def on_ready():
         
         for row in csvReader:
             if lineCount == 0:
-                print(f"Column names detected: {" | ".join(row)}")
+                sendLogMessage(f"Column names detected: {" | ".join(row)}")
                 lineCount += 1
                 
             else:
             
-                print(f"\n{row["username"]} has {row["minutesplayed"]} minutes played.")
+                sendLogMessage(f"{row["username"]} has {row["minutesplayed"]} minutes played.")
             lineCount += 1
             
         csvf.close()
     
-    print("-" * 120)
+    newline()
     
     try:
         
-        print("Attempting to start tasks")
+        sendLogMessage("Attempting to start tasks")
         
         checkPlaytime.start()
             
         resetPlaytime.start()
+        
+        notifyPlaytime.start()
+        
+        sendLogMessage("Tasks started successfully", type="Success")
             
     except Exception as e:
-        print("Failed to run a task:", e)
+        sendLogMessage(f"Failed to run a task: {e}", type="Error")
         
-    print("-" * 120)
+    newline()
 
 
 def checkPlaytimeCSV(username):
@@ -174,33 +188,24 @@ def checkPlaytimeCSV(username):
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
-        print("Searching for playtime of user:", username)
+        sendLogMessage(f"Searching for playtime of user: {username}")
         
         for row in csvReader:
             if row['username'] == username:
                 playerPlaytime = int(row['minutesplayed'])
-                print(f"Found {username} with {playerPlaytime} minutes played")
+                sendLogMessage(f"\n\tFound {username} with {playerPlaytime} minutes played")
                 break
     
     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
         shame = True
     
-    print("-" * 120)
+    newline()
     
     return playerPlaytime, shame
 
-
-#------------------------------------------------------| Task Loops |------------------------------------------------------#
-
-
-@tasks.loop(seconds=10)
-async def change_status():
-    await client.change_presence(activity=discord.Game(next(statuses)))
-    
-
 def updatePlaytime(username, additionalMinutes, reset = False):
     
-    print(f"Updating {username}'s playtime by {additionalMinutes} minutes")
+    #sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
     
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
@@ -210,11 +215,11 @@ def updatePlaytime(username, additionalMinutes, reset = False):
     for row in data:   
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
-            print(f"\nReset {username}'s minutes.")
+            sendLogMessage(f"Reset {username}'s minutes.", type="Success", newline=True)
         
         elif str(username) in str(row["username"]) and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            print(f"\nIncreased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)\n")
+            sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}\n\tNew Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)\n", type="Success", newline=True)
     
     with open("hours.csv", mode="w", newline='') as csvf:
         fieldnames = ['username', 'minutesplayed']
@@ -224,12 +229,88 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         csvWriter.writeheader()
         csvWriter.writerows(data)
 
+def sendLogMessage(message, type="Info", date=True, newline=False):
+    
+    """Possible types: Info, Warning, Error, Success.
+    \ndate : defaults to true, this should be kept true as it will break the look of the log if false.
+    \nnewline : defaults to false, if true, will add a new line before the message."""
+    
+    logtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    messagetosend = ""
+    
+    reset = "\033[0m"
+
+    color = colors.get(type, "\033[94m")
+    
+    if newline:
+        messagetosend += "\n"
+    
+    if not date:
+        messagetosend += f"| {color}{type}{reset} : {message}"
+        
+    else:
+        messagetosend += f"{logtime} | {color}{type}{reset} : {message}"
+
+    print(messagetosend)
+    
+def newline(withDivider=True):
+    
+    """withdivider : defaults to true, if true, adds a divider ('+')."""
+    
+    if withDivider:
+        print("-" * 20 + "+" + "-" * 100)
+    
+    else:
+        print("-" * 120)
+
+#------------------------------------------------------| Task Loops |------------------------------------------------------#
+
+
+@tasks.loop(seconds=10)
+async def change_status():
+    await client.change_presence(activity=discord.Game(next(statuses)))
+    
+
+@tasks.loop(time=datetime.time(hour=21, minute=59))    
+async def notifyPlaytime():
+    sendLogMessage("Notifying playtime...")
+    
+    try:
+        channel = client.get_channel(RandStuffGeneralID)
+        
+        with open("hours.csv", mode="r") as csvf:
+            csvReader = csv.DictReader(csvf)
+            
+            data = list(csvReader)
+            
+            playTime = ""
+            
+            for row in data:
+                playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
+            
+            embed = discord.Embed(
+                title = "Total Playtime for each player today",
+                description = f"Playtime today: \n{playTime}",
+                colour = discord.Colour.green()
+            )
+            
+            csvf.close()
+            
+        await channel.send(embed=embed)
+        
+    except Exception as e:
+        sendLogMessage(f"Error notifying playtime: {e}", type="Error")
+    
 
 @tasks.loop(seconds=600)
 async def checkPlaytime():
     try:
         if ServerConn == False:
-            print("No server connection available, skipping playtime check.")
+            sendLogMessage("No server connection available, skipping playtime check.", type="Error")
+            
+            newline()
+            
             return
         
         qry.start()
@@ -282,10 +363,10 @@ async def checkPlaytime():
                     user = client.get_user(321317643099439104)
                         
         else:
-            print("No players to update, none online")
+            sendLogMessage("No players to update, none online")
     
     except Exception as e:
-        print(f"An error occurred while checking playtime: {e}")
+        sendLogMessage(f"An error occurred while checking playtime: {e}", type="Error")
         
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
@@ -296,35 +377,8 @@ async def resetPlaytime():
     updatePlaytime("Rugged__Base", 0, reset=True)
     updatePlaytime("Benjamano", 0, reset=True)
 
-
-@tasks.loop(time=datetime.time(hour=20, minute=0))    
-async def notifyPlaytime():
-    channel = client.get_channel(RandStuffGeneralID)
-    
-    with open("hours.csv", mode="r") as csvf:
-        csvReader = csv.DictReader(csvf)
-        
-        data = list(csvReader)
-        
-        playTime = ""
-        
-        for row in data:
-            playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
-        
-        embed = discord.Embed(
-            title = "Total Playtime for each player today",
-            description = f"Playtime today: \n{playTime}",
-            colour = discord.Colour.green()
-        )
-        
-        csvf.close()
-        
-    await channel.send(embed=embed)
-    
     
     #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
-
-
 #------------------------------------------------------| Commands |------------------------------------------------------#
 
 
@@ -374,7 +428,7 @@ async def playersonline(interaction: discord.Interaction):
             await interaction.response.send_message(embed=embed,ephemeral=False)
         
         except Exception as e:
-            print(f"Error running Players online command: {e}")
+            sendLogMessage(f"Error running Players online command: {e}", type="Error")
             embed = discord.Embed(
                 title="Error",
                 description="An error occurred while trying to retrieve the list of players.",
