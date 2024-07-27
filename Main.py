@@ -206,57 +206,57 @@ async def on_ready():
 #------------------------------------------------------| Functions |------------------------------------------------------#
 
 
-def checkPlaytimeCSV(username):
-    shame = False
+# def s.checkPlaytimeCSV(username):
+#     shame = False
     
-    with open("StoredData/hours.csv", mode="r") as csvf:
-        csvReader = csv.DictReader(csvf)
+#     with open("StoredData/hours.csv", mode="r") as csvf:
+#         csvReader = csv.DictReader(csvf)
         
-        q.newline(baronly=True)
+#         q.newline(baronly=True)
         
-        q.sendLogMessage(f"Searching for playtime of user: {username}")
+#         q.sendLogMessage(f"Searching for playtime of user: {username}")
         
-        for row in csvReader:
-            if row['username'] == username:
-                playerPlaytime = int(row['minutesplayed'])
-                q.sendLogMessage(f"Found {username} with {playerPlaytime} minutes played", type="Success")
-                break
+#         for row in csvReader:
+#             if row['username'] == username:
+#                 playerPlaytime = int(row['minutesplayed'])
+#                 q.sendLogMessage(f"Found {username} with {playerPlaytime} minutes played", type="Success")
+#                 break
     
-    if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
-        shame = True
+#     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
+#         shame = True
     
-    q.newline()
+#     q.newline()
     
-    return playerPlaytime, shame
+#     return playerPlaytime, shame
 
 
-def updatePlaytime(username, additionalMinutes, reset = False):
+# def s.s.updateplaytime(username, additionalMinutes, reset = False):
     
-    #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
+#     #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
     
-    with open("StoredData/hours.csv", mode="r") as csvf:
-        csvReader = csv.DictReader(csvf)
+#     with open("StoredData/hours.csv", mode="r") as csvf:
+#         csvReader = csv.DictReader(csvf)
         
-        data = list(csvReader)
+#         data = list(csvReader)
 
-    for row in data:   
-        if row['username'] == username and reset == True:
-            row['minutesplayed'] = str(0)
-            q.newline(baronly=True)
-            q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
+#     for row in data:   
+#         if row['username'] == username and reset == True:
+#             row['minutesplayed'] = str(0)
+#             q.newline(baronly=True)
+#             q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
         
-        elif str(username) in str(row["username"]) and reset == False:
-            row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
-            q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
+#         elif str(username) in str(row["username"]) and reset == False:
+#             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
+#             q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
+#             q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
     
-    with open("StoredData/hours.csv", mode="w", newline='') as csvf:
-        fieldnames = ['username', 'minutesplayed']
+#     with open("StoredData/hours.csv", mode="w", newline='') as csvf:
+#         fieldnames = ['username', 'minutesplayed']
         
-        csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
+#         csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
         
-        csvWriter.writeheader()
-        csvWriter.writerows(data)
+#         csvWriter.writeheader()
+#         csvWriter.writerows(data)
 
 
 
@@ -324,38 +324,38 @@ async def checkPlaytime():
             for player in playerList:
 
                 if ".mattcur" in player:
-                    updatePlaytime(".mattcur", 10)
+                    s.updateplaytime(".mattcur", 10)
                     
-                    result = checkPlaytimeCSV(".mattcur")
+                    result = s.checkPlaytimeCSV(".mattcur")
                     
                     user = client.get_user(707634111627395222)
                 
                 elif "Jedi_Maxster" in player:
-                    updatePlaytime("Jedi_Maxster", 10)
+                    s.updateplaytime("Jedi_Maxster", 10)
                     
-                    result = checkPlaytimeCSV("Jedi_Maxster")
+                    result = s.checkPlaytimeCSV("Jedi_Maxster")
                      
                     user = client.get_user(643840086114435082)
 
                 
                 elif "shortoctopus" in player:
-                    updatePlaytime("shortoctopus", 10)
+                    s.updateplaytime("shortoctopus", 10)
                     
-                    result = checkPlaytimeCSV("shortoctopus")
+                    result = s.checkPlaytimeCSV("shortoctopus")
 
                     user = client.get_user(499289163342938112)
                         
                 elif "Rugged__Base" in player:
-                    updatePlaytime("Rugged__Base", 10)
+                    s.updateplaytime("Rugged__Base", 10)
                     
-                    result = checkPlaytimeCSV("Rugged__Base")
+                    result = s.checkPlaytimeCSV("Rugged__Base")
                      
                     user = client.get_user(496388477361979402)
                 
                 elif "Benjamano" in player:
-                    updatePlaytime("Benjamano", 10)
+                    s.updateplaytime("Benjamano", 10)
                     
-                    result = checkPlaytimeCSV("Benjamano")
+                    result = s.checkPlaytimeCSV("Benjamano")
                         
                     user = client.get_user(321317643099439104)
                         
@@ -368,11 +368,11 @@ async def checkPlaytime():
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
 async def resetPlaytime():
-    updatePlaytime(".mattcur", 0, reset=True)
-    updatePlaytime("Jedi_Maxster", 0, reset=True)
-    updatePlaytime("shortoctopus", 0, reset=True)
-    updatePlaytime("Rugged__Base", 0, reset=True)
-    updatePlaytime("Benjamano", 0, reset=True)
+    s.updateplaytime(".mattcur", 0, reset=True)
+    s.updateplaytime("Jedi_Maxster", 0, reset=True)
+    s.updateplaytime("shortoctopus", 0, reset=True)
+    s.updateplaytime("Rugged__Base", 0, reset=True)
+    s.updateplaytime("Benjamano", 0, reset=True)
 
     
     #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
