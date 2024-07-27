@@ -169,18 +169,17 @@ async def on_ready():
     q.newline()
     
     with open("StoredData/hours.csv", mode="r") as csvf:
-        csvReader = csv.DictReader(csvf, ["username", "minutesplayed"])
-        
+        csvReader = csv.DictReader(csvf, ["username", "minutesplayed","discorduserid"])
+
         lineCount = 0
         
         for row in csvReader:
             if lineCount == 0:
                 q.sendLogMessage(f"Column names detected: {" | ".join(row)}")
-                lineCount += 1
                 
             else:
-            
-                q.sendLogMessage(f"{row["username"]} has {row["minutesplayed"]} minutes played.")
+                q.sendLogMessage(f"{row["username"]} has {row["minutesplayed"]} minutes played, and a discord ID of {row["discorduserid"]}.")
+                
             lineCount += 1
             
         csvf.close()
