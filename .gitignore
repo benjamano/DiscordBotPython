@@ -8,3 +8,9 @@ hours.csv
 CommonFunctions/__pycache__/csvTools.cpython-312.pyc
 CommonFunctions/__pycache__/formatTools.cpython-312.pyc
 StoredData/version.txt
+hours.csv
+/CommonFunctions/__pycache__
+/CommonFunctions/__pycache__
+CommonFunctions/__pycache__/formatTools.cpython-312.pyc
+CommonFunctions/__pycache__/csvTools.cpython-312.pyc
+*.pyc
