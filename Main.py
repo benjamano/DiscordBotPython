@@ -37,7 +37,7 @@ client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(),
 
 allowed_mentions = discord.AllowedMentions(everyone = True)
 
-statuses = cycle(['Back from the dead!','Prefix = oioi',])
+statuses = cycle(['Back from the dead!','/help',])
 
 date_of_today = datetime.date.today()
 
