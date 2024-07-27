@@ -8,8 +8,8 @@ from discord import app_commands
 import asyncio
 from mctools import RCONClient, QUERYClient 
 import csv
-import formatTools as q
-import csvTools as s
+import CommonFunctions.formatTools as q
+import CommonFunctions.csvTools as s
 
 intents = discord.Intents.all()
 
@@ -20,23 +20,25 @@ allowed_mentions = discord.AllowedMentions(everyone = True)
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-with open("clientkey.txt", "r") as f:
+with open("StoredData/clientkey.txt", "r") as f:
     key = f.readline().strip('\n')
     code = f.readline()
-    fileServerIP = f.readline()
+    ServerIP = f.readline()
+    PORT = int(f.readline())
     localConnection = f.readline().strip('\n')
     debugMode = f.readline().strip('\n')
     
     f.close()
     
-with open("version.txt", "r") as f:
+with open("StoredData/version.txt", "r") as f:
     VersionNo = f.readline().strip('\n')
     Branch = f.readline().strip('\n')
     
     f.close()
-        
-ServerIP = fileServerIP
-PORT = 25575
+
+
+#------------------------------------------------------| On Ready |------------------------------------------------------#
+
 
 @client.event
 async def on_ready():
@@ -145,7 +147,7 @@ async def on_ready():
     
     q.newline()
     
-    with open("hours.csv", mode="r") as csvf:
+    with open("StoredData/hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf, ["username", "minutesplayed"])
         
         lineCount = 0
@@ -182,10 +184,13 @@ async def on_ready():
     q.newline()
 
 
+#------------------------------------------------------| Functions |------------------------------------------------------#
+
+
 def checkPlaytimeCSV(username):
     shame = False
     
-    with open("hours.csv", mode="r") as csvf:
+    with open("StoredData/hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
         q.newline(baronly=True)
@@ -210,7 +215,7 @@ def updatePlaytime(username, additionalMinutes, reset = False):
     
     #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
     
-    with open("hours.csv", mode="r") as csvf:
+    with open("StoredData/hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
         data = list(csvReader)
@@ -226,7 +231,7 @@ def updatePlaytime(username, additionalMinutes, reset = False):
             q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
             q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
     
-    with open("hours.csv", mode="w", newline='') as csvf:
+    with open("StoredData/hours.csv", mode="w", newline='') as csvf:
         fieldnames = ['username', 'minutesplayed']
         
         csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
@@ -252,7 +257,7 @@ async def notifyPlaytime():
     try:
         channel = client.get_channel(RandStuffGeneralID)
         
-        with open("hours.csv", mode="r") as csvf:
+        with open("StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             data = list(csvReader)
@@ -454,7 +459,7 @@ async def playersonline(interaction: discord.Interaction):
 @client.tree.command(name="totalplaytime", description="Displays the total playtime for each player on the Minecraft Server today")
 async def totalplaytime(interaction: discord.Interaction):
     try:
-        with open("hours.csv", mode="r") as csvf:
+        with open("StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             data = list(csvReader)
