@@ -34,6 +34,8 @@ async def checkPlaytimeCSV(username):
 async def updatePlaytime(username, additionalMinutes, reset = False):
     
     try:
+        
+        q.newline(baronly=True)
     
         #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
         
