@@ -20,21 +20,40 @@ allowed_mentions = discord.AllowedMentions(everyone = True)
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-with open("StoredData/clientkey.txt", "r") as f:
-    key = f.readline().strip('\n')
-    code = f.readline()
-    ServerIP = f.readline()
-    PORT = int(f.readline())
-    localConnection = f.readline().strip('\n')
-    debugMode = f.readline().strip('\n')
+try:
     
-    f.close()
+    q.newline()
+
+    with open("StoredData/clientkey.txt", "r") as f:
+        q.sendLogMessage("Reading from file clientkey.txt")
+        
+        key = f.readline().strip('\n')
+        code = f.readline()
+        ServerIP = f.readline()
+        PORT = int(f.readline())
+        localConnection = f.readline().strip('\n')
+        debugMode = f.readline().strip('\n')
+        
+        f.close()
+        
+        q.sendLogMessage("Read from clientkey.txt successfully", type="Success")
     
-with open("StoredData/version.txt", "r") as f:
-    VersionNo = f.readline().strip('\n')
-    Branch = f.readline().strip('\n')
-    
-    f.close()
+    q.newline(baronly=True)
+        
+    with open("StoredData/version.txt", "r") as f:
+        q.sendLogMessage("Reading from file version.txt")
+        
+        VersionNo = f.readline().strip('\n')
+        Branch = f.readline().strip('\n')
+        
+        f.close()
+        
+        q.sendLogMessage("Read from version.txt successfully", type="Success")
+        
+    q.newline()
+
+except Exception as e:
+    q.sendLogMessage(f"Error reading from files: {e}", type="Error")
 
 
 #------------------------------------------------------| On Ready |------------------------------------------------------#
