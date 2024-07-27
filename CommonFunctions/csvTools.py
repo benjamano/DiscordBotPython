@@ -1,6 +1,7 @@
 import CommonFunctions.formatTools as q
 import csv
 
+
 def checkPlaytimeCSV(username):
     shame = False
     
