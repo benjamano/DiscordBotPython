@@ -42,6 +42,8 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             
             data = list(csvReader)
             
+            csvf.close()
+            
         if all(row['username'] not in username for row in data) and username != "":
             q.sendLogMessage(f"Could not find username '{username}' in file, notifying Ben through DMs", type="Warning")
             
@@ -52,18 +54,18 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             
             return None
         
-        q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes", type="Info")
+        #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes", type="Info")
 
         for row in data:
             
-            q.sendLogMessage(f"Updating {row['username']}")
+            #q.sendLogMessage(f"Updating {row['username']}")
             
             if row['username'] == username and reset == True:
                 row['minutesplayed'] = str(0)
                 q.newline(baronly=True)
                 q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
             
-            elif str(username) in str(row["username"]) and reset == False:
+            else:                
                 row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
                 q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
                 q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
@@ -75,6 +77,8 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             
             csvWriter.writeheader()
             csvWriter.writerows(data)
+            
+            csvf.close()
             
         return True
     
