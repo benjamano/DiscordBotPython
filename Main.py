@@ -8,12 +8,24 @@ from discord import app_commands
 import asyncio
 from mctools import RCONClient, QUERYClient 
 import csv
+import formatTools as q
+import csvTools as s
+
+intents = discord.Intents.all()
+
+client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(), help_command=None, case_insensitive = True) # Sets the command prefix to the string 'oioi'
+
+allowed_mentions = discord.AllowedMentions(everyone = True)
+
+RandStuffGeneralID = 731620307659390987
+TestServerID = 1001555036976971856
 
 with open("clientkey.txt", "r") as f:
     key = f.readline().strip('\n')
     code = f.readline()
     fileServerIP = f.readline()
     localConnection = f.readline().strip('\n')
+    debugMode = f.readline().strip('\n')
     
     f.close()
     
@@ -22,83 +34,65 @@ with open("version.txt", "r") as f:
     Branch = f.readline().strip('\n')
     
     f.close()
-
+        
 ServerIP = fileServerIP
 PORT = 25575
-
-colors = {
-        "Info": "\033[94m",    # Blue
-        "Warning": "\033[93m", # Yellow
-        "Error": "\033[91m",   # Red
-        "Success": "\033[92m"  # Green
-    }
-
-intents = discord.Intents.all()
-
-client = commands.Bot(command_prefix = 'oioi ', intents = discord.Intents.all(), help_command=None, case_insensitive = True) # Sets the command prefix to the string 'oioi'
-
-allowed_mentions = discord.AllowedMentions(everyone = True)
-
-statuses = cycle(['Back from the dead!','/help',])
-
-date_of_today = datetime.date.today()
-
-RandStuffGeneralID = 731620307659390987
-TestServerID = 1001555036976971856
-
-print("""
-██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
-██╔══██╗██╔════╝████╗░██║████╗░████║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗
-██████╦╝█████╗░░██╔██╗██║██╔████╔██║█████╗░░██████╔╝██║░░╚═╝█████╗░░██████╔╝
-██╔══██╗██╔══╝░░██║╚████║██║╚██╔╝██║██╔══╝░░██╔══██╗██║░░██╗██╔══╝░░██╔══██╗
-██████╦╝███████╗██║░╚███║██║░╚═╝░██║███████╗██║░░██║╚█████╔╝███████╗██║░░██║
-╚═════╝░╚══════╝╚═╝░░╚══╝╚═╝░░░░░╚═╝╚══════╝╚═╝░░╚═╝░╚════╝░╚══════╝╚═╝░░╚═╝""")
-
-print("""
-░█████╗░██████╗░░█████╗░███████╗██╗░░░██╗███╗░░██╗███████╗██╗██╗░░░░░  ██████╗░░░░░█████╗░
-██╔══██╗██╔══██╗██╔══██╗╚════██║╚██╗░██╔╝████╗░██║██╔════╝██║██║░░░░░  ╚════██╗░░░██╔══██╗
-██║░░╚═╝██████╔╝███████║░░███╔═╝░╚████╔╝░██╔██╗██║█████╗░░██║██║░░░░░  ░░███╔═╝░░░██║░░██║
-██║░░██╗██╔══██╗██╔══██║██╔══╝░░░░╚██╔╝░░██║╚████║██╔══╝░░██║██║░░░░░  ██╔══╝░░░░░██║░░██║
-╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
-░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
-
-print(f"Version {VersionNo} ({Branch})\n")
-
-
-#slash = client.create_group("credits")
 
 @client.event
 async def on_ready():
     
-    global ServerConn, rcon, qry
+    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses
     
+    if debugMode:
+        statuses = cycle([f'Running in Debug mode on branch {Branch}',])
+    else:
+        statuses = cycle(['Back from the dead!','/help',])
+    
+    print("""
+    ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
+    ██╔══██╗██╔════╝████╗░██║████╗░████║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗
+    ██████╦╝█████╗░░██╔██╗██║██╔████╔██║█████╗░░██████╔╝██║░░╚═╝█████╗░░██████╔╝
+    ██╔══██╗██╔══╝░░██║╚████║██║╚██╔╝██║██╔══╝░░██╔══██╗██║░░██╗██╔══╝░░██╔══██╗
+    ██████╦╝███████╗██║░╚███║██║░╚═╝░██║███████╗██║░░██║╚█████╔╝███████╗██║░░██║
+    ╚═════╝░╚══════╝╚═╝░░╚══╝╚═╝░░░░░╚═╝╚══════╝╚═╝░░╚═╝░╚════╝░╚══════╝╚═╝░░╚═╝""")
+
+    print("""
+    ░█████╗░██████╗░░█████╗░███████╗██╗░░░██╗███╗░░██╗███████╗██╗██╗░░░░░  ██████╗░░░░░█████╗░
+    ██╔══██╗██╔══██╗██╔══██╗╚════██║╚██╗░██╔╝████╗░██║██╔════╝██║██║░░░░░  ╚════██╗░░░██╔══██╗
+    ██║░░╚═╝██████╔╝███████║░░███╔═╝░╚████╔╝░██╔██╗██║█████╗░░██║██║░░░░░  ░░███╔═╝░░░██║░░██║
+    ██║░░██╗██╔══██╗██╔══██║██╔══╝░░░░╚██╔╝░░██║╚████║██╔══╝░░██║██║░░░░░  ██╔══╝░░░░░██║░░██║
+    ╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
+    ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
+
+    print(f"Version {VersionNo} ({Branch})\n")
+        
     ServerConn = False
     
-    newline()
+    q.newline()
     
-    sendLogMessage(f'Ping: {round(client.latency * 1000)}ms')
+    q.sendLogMessage(f'Ping: {round(client.latency * 1000)}ms')
     
     change_status.start()
         
-    newline()
+    q.newline()
     
-    newline(baronly=True)
+    q.newline(baronly=True)
     
-    sendLogMessage(f'Logged in as {client.user}', type="Success")
+    q.sendLogMessage(f'Logged in as {client.user}', type="Success")
     
-    newline(baronly=True)
+    q.newline(baronly=True)
     
     try:
         synced = await client.tree.sync()
         
-        sendLogMessage(f"Synced {len(synced)} command(s)", type="Success")
+        q.sendLogMessage(f"Synced {len(synced)} command(s)", type="Success")
     
     except Exception as e:
-        sendLogMessage(f"Error syncing command tree: {e}", type="Error")
+        q.sendLogMessage(f"Error syncing command tree: {e}", type="Error")
         
-    newline(baronly=True)
+    q.newline(baronly=True)
     
-    newline()
+    q.newline()
     
     #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
     
@@ -117,7 +111,7 @@ async def on_ready():
                 qry = QUERYClient(host='127.0.0.1', port=25565)
                 
                 if rcon.login('1552'):
-                    sendLogMessage("RCON Login Successful!", type="Success")
+                    q.sendLogMessage("RCON Login Successful!", type="Success")
                     
                     response = rcon.command('say Crazy Neil is watching....')
                     
@@ -128,7 +122,7 @@ async def on_ready():
                 else:
                     raise Exception("Server Connection Failed")
             else:
-                sendLogMessage("Bot is starting outside of the network, skipping RCON connection.", type="Warning")
+                q.sendLogMessage("Bot is starting outside of the network, skipping RCON connection.", type="Warning")
                 break
     
         except Exception as e:
@@ -136,20 +130,20 @@ async def on_ready():
             tries += 1
             
             if tries > 10:
-                sendLogMessage(f"Couldn't connect to server after 10 tries. Waiting for 30 Minutes. ({e})", type="Error")
+                q.sendLogMessage(f"Couldn't connect to server after 10 tries. Waiting for 30 Minutes. ({e})", type="Error")
                 await asyncio.sleep(1800)
             
             elif tries > 4:
-                sendLogMessage(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})", type="Warning")
+                q.sendLogMessage(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})", type="Warning")
                 await asyncio.sleep(300)
             
             else:
-                sendLogMessage(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})", type="Warning")  
+                q.sendLogMessage(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})", type="Warning")  
                 await asyncio.sleep(60)
             
-            sendLogMessage(f"Tries: {tries}\n")
+            q.sendLogMessage(f"Tries: {tries}\n")
     
-    newline()
+    q.newline()
     
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf, ["username", "minutesplayed"])
@@ -158,21 +152,21 @@ async def on_ready():
         
         for row in csvReader:
             if lineCount == 0:
-                sendLogMessage(f"Column names detected: {" | ".join(row)}")
+                q.sendLogMessage(f"Column names detected: {" | ".join(row)}")
                 lineCount += 1
                 
             else:
             
-                sendLogMessage(f"{row["username"]} has {row["minutesplayed"]} minutes played.")
+                q.sendLogMessage(f"{row["username"]} has {row["minutesplayed"]} minutes played.")
             lineCount += 1
             
         csvf.close()
     
-    newline()
+    q.newline()
     
     try:
         
-        sendLogMessage("Attempting to start tasks")
+        q.sendLogMessage("Attempting to start tasks")
         
         checkPlaytime.start()
             
@@ -180,12 +174,12 @@ async def on_ready():
         
         notifyPlaytime.start()
         
-        sendLogMessage("Tasks started successfully", type="Success")
+        q.sendLogMessage("Tasks started successfully", type="Success")
             
     except Exception as e:
-        sendLogMessage(f"Failed to run a task: {e}", type="Error")
-        
-    newline()
+        q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
+
+    q.newline()
 
 
 def checkPlaytimeCSV(username):
@@ -194,26 +188,27 @@ def checkPlaytimeCSV(username):
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
         
-        newline(baronly=True)
+        q.newline(baronly=True)
         
-        sendLogMessage(f"Searching for playtime of user: {username}")
+        q.sendLogMessage(f"Searching for playtime of user: {username}")
         
         for row in csvReader:
             if row['username'] == username:
                 playerPlaytime = int(row['minutesplayed'])
-                sendLogMessage(f"Found {username} with {playerPlaytime} minutes played", type="Success")
+                q.sendLogMessage(f"Found {username} with {playerPlaytime} minutes played", type="Success")
                 break
     
     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
         shame = True
     
-    newline()
+    q.newline()
     
     return playerPlaytime, shame
 
+
 def updatePlaytime(username, additionalMinutes, reset = False):
     
-    #sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
+    #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
     
     with open("hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf)
@@ -223,13 +218,13 @@ def updatePlaytime(username, additionalMinutes, reset = False):
     for row in data:   
         if row['username'] == username and reset == True:
             row['minutesplayed'] = str(0)
-            newline(baronly=True)
-            sendLogMessage(f"Reset {username}'s minutes.", type="Success")
+            q.newline(baronly=True)
+            q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
         
         elif str(username) in str(row["username"]) and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-            sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
-            sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
+            q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
+            q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
     
     with open("hours.csv", mode="w", newline='') as csvf:
         fieldnames = ['username', 'minutesplayed']
@@ -239,47 +234,10 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         csvWriter.writeheader()
         csvWriter.writerows(data)
 
-def sendLogMessage(message, type="Info", date=True, newline=False):
-    
-    """Possible types: Info, Warning, Error, Success.
-    \ndate : defaults to true, this should be kept true as it will break the look of the log if false.
-    \nnewline : defaults to false, if true, will add a new line before the message."""
-    
-    logtime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    messagetosend = ""
-    
-    reset = "\033[0m"
 
-    color = colors.get(type, "\033[94m")
-    
-    if newline:
-        messagetosend += "\n"
-    
-    if not date:
-        messagetosend += f"| {color}{type}{reset} : {message}"
-        
-    else:
-        messagetosend += f"{logtime} | {color}{type}{reset} : {message}"
-
-    print(messagetosend)
-    
-def newline(withDivider=True, baronly=False):
-    
-    """withdivider : defaults to true, if true, adds a divider ('+')."""
-    
-    if baronly:
-        print("\t\t    |")
-        
-        return
-    
-    if withDivider:
-        print("-" * 20 + "+" + "-" * 100)
-    
-    else:
-        print("-" * 120)
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
+
 
 
 @tasks.loop(seconds=10)
@@ -289,7 +247,7 @@ async def change_status():
 
 @tasks.loop(time=datetime.time(hour=22, minute=30))    
 async def notifyPlaytime():
-    sendLogMessage("Notifying playtime...")
+    q.sendLogMessage("Notifying playtime...")
     
     try:
         channel = client.get_channel(RandStuffGeneralID)
@@ -315,16 +273,16 @@ async def notifyPlaytime():
         await channel.send(embed=embed)
         
     except Exception as e:
-        sendLogMessage(f"Error notifying playtime: {e}", type="Error")
+        q.sendLogMessage(f"Error notifying playtime: {e}", type="Error")
     
 
 @tasks.loop(seconds=600)
 async def checkPlaytime():
     try:
         if ServerConn == False:
-            sendLogMessage("No server connection available, skipping playtime check.", type="Error")
+            q.sendLogMessage("No server connection available, skipping playtime check.", type="Error")
             
-            newline()
+            q.newline()
             
             return
         
@@ -378,10 +336,10 @@ async def checkPlaytime():
                     user = client.get_user(321317643099439104)
                         
         else:
-            sendLogMessage("No players to update, none online")
+            q.sendLogMessage("No players to update, none online")
     
     except Exception as e:
-        sendLogMessage(f"An error occurred while checking playtime: {e}", type="Error")
+        q.sendLogMessage(f"An error occurred while checking playtime: {e}", type="Error")
         
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
@@ -402,10 +360,10 @@ async def resetPlaytime():
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Command not found. Please use a valid command. Use `/help` for a list of commands.")
-        sendLogMessage(f"{ctx.author} sent a command that doesn't exist: '{ctx.message.content}'", type="Error")
+        q.sendLogMessage(f"{ctx.author} sent a command that doesn't exist: '{ctx.message.content}'", type="Error")
     else:
         await ctx.send("An error occurred. Please try again later.")
-        sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
+        q.sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
 
 
 @client.tree.command(name="help", description="Displays a list of all possible commands")
@@ -424,7 +382,7 @@ async def help(interaction:discord.Interaction):
         await interaction.response.send_message(embed=embed,ephemeral=False)
     
     except Exception as e:
-        sendLogMessage(f"Error running help command: {e}", type="Error")
+        q.sendLogMessage(f"Error running help command: {e}", type="Error")
 
 
 @client.tree.command(name="playersonline", description="Displays a list of all players currently on the Minecraft Server")
@@ -443,7 +401,7 @@ async def playersonline(interaction: discord.Interaction):
             await interaction.response.send_message(embed=embed,ephemeral=False)
                 
         except Exception as e: 
-            sendLogMessage(f"Couldn't send the 'No connection to server' message: {e}", type="Error")
+            q.sendLogMessage(f"Couldn't send the 'No connection to server' message: {e}", type="Error")
     
     else:
         try:
@@ -478,7 +436,7 @@ async def playersonline(interaction: discord.Interaction):
             await interaction.response.send_message(embed=embed,ephemeral=False)
         
         except Exception as e:
-            sendLogMessage(f"Error running Players online command: {e}", type="Error")
+            q.sendLogMessage(f"Error running Players online command: {e}", type="Error")
             
             try:
                 
@@ -490,7 +448,7 @@ async def playersonline(interaction: discord.Interaction):
                 await interaction.response.send_message(embed=embed,ephemeral=False)
             
             except Exception as e:
-                sendLogMessage(f"Error while sending error message via discord: {e}", type="Error")
+                q.sendLogMessage(f"Error while sending error message via discord: {e}", type="Error")
 
 
 @client.tree.command(name="totalplaytime", description="Displays the total playtime for each player on the Minecraft Server today")
@@ -519,7 +477,7 @@ async def totalplaytime(interaction: discord.Interaction):
         await interaction.response.send_message(embed=embed,ephemeral=False)
     
     except Exception as e:
-        sendLogMessage(f"Error running total playtime command: {e}", type="Error")
+        q.sendLogMessage(f"Error running total playtime command: {e}", type="Error")
         
         
 @client.tree.command(name="credits", description="Displays the credits")
@@ -536,7 +494,7 @@ async def credits(interaction: discord.Interaction):
         await interaction.response.send_message(embed=embed, ephemeral=True)
         
     except Exception as e:
-        sendLogMessage(f"Error running credits command: {e}", type="Error")
+        q.sendLogMessage(f"Error running credits command: {e}", type="Error")
 
 
 #This command allows a user to ask a question to an 8ball and picks a random response.
@@ -677,5 +635,6 @@ async def howgay(interaction: discord.Interaction):
     #players[server.id] = player
     #player.start()
     
+
 
 client.run(key) # <----- Enter your Bot Token code here (Found in Discord Developer Portal)
