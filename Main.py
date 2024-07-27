@@ -68,6 +68,8 @@ async def on_ready():
         statuses = cycle([f'Running in Debug mode on branch {Branch}',])
     else:
         statuses = cycle(['Back from the dead!','/help',])
+        
+    q.newline(withDivider=False)
     
     print("""
     ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
