@@ -208,11 +208,10 @@ async def on_ready():
     
     q.sendLogMessage(f"{history}")
     
-    reactions = await getReactionsbyID(1251501929607987292, 1248394904833495160)
-    q.sendLogMessage(f"{reactions}")
-    
-    for reaction in reactions:
-        q.sendLogMessage(f"{reaction.emoji} : {reaction.count}")
+    for message in history:
+        q.sendLogMessage(f"MessageID: {message.split(' : ')[0]} has {message.split(' : ')[2]} upvotes")
+
+
 
 #------------------------------------------------------| Functions |------------------------------------------------------#
 
@@ -273,9 +272,30 @@ async def getHistoryofChannel(channelID):
     try:
         channel = client.get_channel(channelID)
         
-        history = channel.history(limit=200)
+        history = []
         
-        return history
+        async for message in channel.history(limit=300):
+            
+            history.append(f"{message.id}")
+        
+        upvoteHistory = []
+        
+        for message in history:
+            reactions = await getReactionsbyID(message, channelID)
+            
+            for reaction in reactions:
+                emoji = reaction.emoji
+                
+                if isinstance(emoji, str):
+                    emoji_name = emoji 
+                    
+                else:
+                    emoji_name = f"<:{emoji.name}:{emoji.id}>" 
+                
+                if emoji_name == "<:upvote:727485131740414002>":
+                    upvoteHistory.append(f"{message} : upvote : {reaction.count}")
+        
+        return upvoteHistory
     
     except Exception as e:
         q.sendLogMessage(f"Error getting history of channel {channelID}: {e}", type="Error")
