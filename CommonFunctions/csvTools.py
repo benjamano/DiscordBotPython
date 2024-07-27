@@ -53,3 +53,21 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         
         csvWriter.writeheader()
         csvWriter.writerows(data)
+
+def getUserID(player):
+    q.sendLogMessage(f"Searching for userID of player: {player}")
+    
+    with open("StoredData/hours.csv", mode="r") as csvf:
+        csvReader = csv.DictReader(csvf)
+        
+        data = list(csvReader)
+    
+    for row in data:
+        if row['username'] == player:
+            q.sendLogMessage(f"Found {player} with userID: {row['discorduserid']}", type="Success")
+            return row['discorduserid']
+        
+    q.sendLogMessage(f"Could not find {player} in file.", type="Warning")
+    
+    return None
+

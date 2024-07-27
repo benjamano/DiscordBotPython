@@ -330,8 +330,8 @@ async def checkPlaytime():
                     
                     result = s.checkPlaytimeCSV(".mattcur")
                     
-                    user = client.get_user(707634111627395222)
-                
+                    user = s.getUserID(player)
+                    
                 elif "Jedi_Maxster" in player:
                     s.updateplaytime("Jedi_Maxster", 10)
                     
@@ -360,6 +360,10 @@ async def checkPlaytime():
                     result = s.checkPlaytimeCSV("Benjamano")
                         
                     user = client.get_user(321317643099439104)
+                
+                else:
+                    q.sendLogMessage(f"Player {player} not found in database, skipping", type="Warning")
+                    continue
                         
         else:
             q.sendLogMessage("No players to update, none online")
