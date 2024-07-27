@@ -14,13 +14,15 @@ with open("clientkey.txt", "r") as f:
     code = f.readline()
     fileServerIP = f.readline()
     localConnection = f.readline().strip('\n')
-    apiPassword = f.readline().strip('\n')
-    URLtoCall = f.readline().strip('\n')
-    APIUrl = f.readline().strip('\n')
-    CommandUrl = f.readline().strip('\n')
     
     f.close()
     
+with open("version.txt", "r") as f:
+    VersionNo = f.readline().strip('\n')
+    Branch = f.readline().strip('\n')
+    
+    f.close()
+
 ServerIP = fileServerIP
 PORT = 25575
 
@@ -44,8 +46,6 @@ date_of_today = datetime.date.today()
 RandStuffGeneralID = 731620307659390987
 TestServerID = 1001555036976971856
 
-Version = "2.5"
-
 print("""
 ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
 ██╔══██╗██╔════╝████╗░██║████╗░████║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗
@@ -62,7 +62,7 @@ print("""
 ╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
 ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
 
-print(f"Version {Version}\n")
+print(f"Version {VersionNo} ({Branch})\n")
 
 
 #slash = client.create_group("credits")
@@ -106,7 +106,7 @@ async def on_ready():
     
     channel = client.get_channel(TestServerID)
     if channel:
-        await channel.send(f"```Succesfully Started @ {datetime.datetime.now()} \nVersion: {Version}```")
+        await channel.send(f"```Succesfully Started @ {datetime.datetime.now()} \nVersion: {VersionNo} ({Branch})```")
         
     while ServerConn == False:
         try:
@@ -229,7 +229,7 @@ def updatePlaytime(username, additionalMinutes, reset = False):
         elif str(username) in str(row["username"]) and reset == False:
             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
             sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
-            sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)\n", type="Info")
+            sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
     
     with open("hours.csv", mode="w", newline='') as csvf:
         fieldnames = ['username', 'minutesplayed']
