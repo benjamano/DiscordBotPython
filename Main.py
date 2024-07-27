@@ -204,13 +204,15 @@ async def on_ready():
 
     q.newline()
     
+    history = await getHistoryofChannel(1248394904833495160)
+    
+    q.sendLogMessage(f"{history}")
+    
     reactions = await getReactionsbyID(1251501929607987292, 1248394904833495160)
     q.sendLogMessage(f"{reactions}")
     
     for reaction in reactions:
         q.sendLogMessage(f"{reaction.emoji} : {reaction.count}")
-
-
 
 #------------------------------------------------------| Functions |------------------------------------------------------#
 
@@ -265,6 +267,18 @@ async def getReactionsbyID(messageID, channelID):
     
     except Exception as e:
         q.sendLogMessage(f"Error getting reactions for message {messageID} in channel {channelID}: {e}", type="Error")
+        return None
+    
+async def getHistoryofChannel(channelID):
+    try:
+        channel = client.get_channel(channelID)
+        
+        history = channel.history(limit=200)
+        
+        return history
+    
+    except Exception as e:
+        q.sendLogMessage(f"Error getting history of channel {channelID}: {e}", type="Error")
         return None
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
