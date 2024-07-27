@@ -203,6 +203,12 @@ async def on_ready():
         q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
 
     q.newline()
+    
+    reactions = await getReactionsbyID(1251501929607987292, 1248394904833495160)
+    q.sendLogMessage(f"{reactions}")
+    
+    for reaction in reactions:
+        q.sendLogMessage(f"{reaction.emoji} : {reaction.count}")
 
 
 
@@ -247,59 +253,19 @@ async def getDiscordID(player):
     return True
 
 
-# def s.checkPlaytimeCSV(username):
-#     shame = False
-    
-#     with open("StoredData/hours.csv", mode="r") as csvf:
-#         csvReader = csv.DictReader(csvf)
+async def getReactionsbyID(messageID, channelID):
+    try:
+        channel = client.get_channel(channelID)
         
-#         q.newline(baronly=True)
+        message = await channel.fetch_message(messageID)
         
-#         q.sendLogMessage(f"Searching for playtime of user: {username}")
+        reactions = message.reactions
         
-#         for row in csvReader:
-#             if row['username'] == username:
-#                 playerPlaytime = int(row['minutesplayed'])
-#                 q.sendLogMessage(f"Found {username} with {playerPlaytime} minutes played", type="Success")
-#                 break
+        return reactions
     
-#     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
-#         shame = True
-    
-#     q.newline()
-    
-#     return playerPlaytime, shame
-
-
-# def s.s.updateplaytime(username, additionalMinutes, reset = False):
-    
-#     #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
-    
-#     with open("StoredData/hours.csv", mode="r") as csvf:
-#         csvReader = csv.DictReader(csvf)
-        
-#         data = list(csvReader)
-
-#     for row in data:   
-#         if row['username'] == username and reset == True:
-#             row['minutesplayed'] = str(0)
-#             q.newline(baronly=True)
-#             q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
-        
-#         elif str(username) in str(row["username"]) and reset == False:
-#             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-#             q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
-#             q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
-    
-#     with open("StoredData/hours.csv", mode="w", newline='') as csvf:
-#         fieldnames = ['username', 'minutesplayed']
-        
-#         csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
-        
-#         csvWriter.writeheader()
-#         csvWriter.writerows(data)
-
-
+    except Exception as e:
+        q.sendLogMessage(f"Error getting reactions for message {messageID} in channel {channelID}: {e}", type="Error")
+        return None
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
 
@@ -369,46 +335,6 @@ async def checkPlaytime():
                 
                 if not await s.updatePlaytime(player, 10):
                         await getDiscordID(player)
-
-                # if ".mattcur" in player:
-                #     if not s.updateplaytime(".mattcur", 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV(".mattcur")
-                    
-                #     user = s.getUserID(player)
-                    
-                # elif "Jedi_Maxster" in player:
-                    
-                    
-                #     result = s.checkPlaytimeCSV("Jedi_Maxster")
-                     
-                #     user = client.get_user(643840086114435082)
-
-                
-                # elif "shortoctopus" in player:
-                #     if not s.updateplaytime(player, 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV("shortoctopus")
-
-                #     user = client.get_user(499289163342938112)
-                        
-                # elif "Rugged__Base" in player:
-                #     if not s.updateplaytime(player, 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV("Rugged__Base")
-                     
-                #     user = client.get_user(496388477361979402)
-                
-                # elif "Benjamano" in player:
-                #     if not s.updateplaytime(player, 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV("Benjamano")
-                        
-                #     user = client.get_user(321317643099439104)
         else:
             q.sendLogMessage("No players to update, none online")
     
