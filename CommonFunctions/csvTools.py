@@ -51,8 +51,13 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             q.sendLogMessage(f"Discord ID is empty for user: {username}, getting Discord ID through Ben using DMs", type="Warning")
             
             return None
+        
+        q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes", type="Info")
 
         for row in data:
+            
+            q.sendLogMessage(f"Checking {row['username']} ({row})")
+            
             if row['username'] == username and reset == True:
                 row['minutesplayed'] = str(0)
                 q.newline(baronly=True)
@@ -76,6 +81,7 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
     except Exception as e:
         q.sendLogMessage(f"Error updating {username}'s playtime: {e}", type="Error")
         return "Error"
+
 
 async def getUserID(player):
     try:
