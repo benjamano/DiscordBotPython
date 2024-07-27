@@ -398,25 +398,6 @@ async def resetPlaytime():
 
 
 
-@client.tree.command(name="help", description="Displays a list of all commands")
-async def help(interaction:discord.Interaction):
-    #TODO: Add a help command that lists all the commands and their descriptions
-    
-    try:
-        embed = discord.Embed(
-            title = "Help",
-            description = "List of all commands",
-            colour = discord.Colour.blue()
-        )
-        
-        embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?" inline=False)
-        
-        await interaction.response.send_message(embed=embed,ephemeral=False)
-    
-    except Exception as e:
-        sendLogMessage(f"Error running help command: {e}", type="Error")
-
-
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -427,23 +408,42 @@ async def on_command_error(ctx, error):
         sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
 
 
-@client.tree.command(name="playersonline")
-async def playersonline(interaction: discord.Interaction):
+@client.tree.command(name="help", description="Displays a list of all possible commands")
+async def help(interaction:discord.Interaction):
+    #TODO: Add a help command that lists all the commands and their descriptions
+    
     try:
-        if ServerConn == False:
-                embed = discord.Embed(
-                    
-                    title = "No Connection",
-                    description = f"Connection to server is unavailable, please try again later.",
-                    colour = discord.Colour.red()
-                )
+        embed = discord.Embed(
+            title = "Help",
+            description = "List of all commands",
+            colour = discord.Colour.blue()
+        )
+        
+        embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?", inline=False)
+        
+        await interaction.response.send_message(embed=embed,ephemeral=False)
+    
+    except Exception as e:
+        sendLogMessage(f"Error running help command: {e}", type="Error")
+
+
+@client.tree.command(name="playersonline", description="Displays a list of all players currently on the Minecraft Server")
+async def playersonline(interaction: discord.Interaction):
+    if ServerConn == False:
+        try:
+            embed = discord.Embed(
                 
-                embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Minecraft Server')
+                title = "No Connection",
+                description = f"Connection to server is unavailable, please try again later.",
+                colour = discord.Colour.red()
+            )
+            
+            embed.set_footer(text = 'Crazy Neil is running - but there is a problem with the connection to the Minecraft Server')
+            
+            await interaction.response.send_message(embed=embed,ephemeral=False)
                 
-                await interaction.response.send_message(embed=embed,ephemeral=False)
-                
-    except: 
-        sendLogMessage(f"Couldn't send the 'No connection to server' message: {e}", type="Error")
+        except Exception as e: 
+            sendLogMessage(f"Couldn't send the 'No connection to server' message: {e}", type="Error")
     
     else:
         try:
@@ -473,6 +473,8 @@ async def playersonline(interaction: discord.Interaction):
                 colour=discord.Colour.green()
             )
             
+            embed.set_footer(text = f'Ping: {round(client.latency * 1000)}ms')
+            
             await interaction.response.send_message(embed=embed,ephemeral=False)
         
         except Exception as e:
@@ -491,7 +493,7 @@ async def playersonline(interaction: discord.Interaction):
                 sendLogMessage(f"Error while sending error message via discord: {e}", type="Error")
 
 
-@client.tree.command(name="totalplaytime")
+@client.tree.command(name="totalplaytime", description="Displays the total playtime for each player on the Minecraft Server today")
 async def totalplaytime(interaction: discord.Interaction):
     try:
         with open("hours.csv", mode="r") as csvf:
@@ -510,6 +512,8 @@ async def totalplaytime(interaction: discord.Interaction):
             colour = discord.Colour.green()
         )
         
+        embed.set_footer(text = f'Ping: {round(client.latency * 1000)}ms')
+        
         csvf.close()
         
         await interaction.response.send_message(embed=embed,ephemeral=False)
@@ -518,8 +522,8 @@ async def totalplaytime(interaction: discord.Interaction):
         sendLogMessage(f"Error running total playtime command: {e}", type="Error")
         
         
-@client.command(description="Displays the credits")
-async def credits(ctx):
+@client.tree.command(name="credits", description="Displays the credits")
+async def credits(interaction: discord.Interaction):
     try:
         embed = discord.Embed(
             title = 'Credits',
@@ -527,53 +531,78 @@ async def credits(ctx):
             colour = discord.Colour.blue()
         )
         
-        embed.set_footer(text = 'Thats literally just it')
+        embed.set_footer(text = 'Hold the applause!')
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
         
     except Exception as e:
         sendLogMessage(f"Error running credits command: {e}", type="Error")
 
 
-@client.command()
-async def ping(ctx):
-    await ctx.send(f'Pong! {round(client.latency * 1000)}ms')
-
-
-@client.tree.command(name="foo")
-async def foo(interaction: discord.Interaction):
-    await interaction.response.send_message("foo",ephemeral=True)
-
-
 #This command allows a user to ask a question to an 8ball and picks a random response.
-@client.command(aliases=['8ball'])
-async def _8ball(ctx):
-    responses = ["It is certain.",
-                "It is decidedly so.",
-                "Without a doubt.",
-                "Yes - definitely.",
-                "You may rely on it.",
-                "As I see it, yes.",
-                "Most likely.",
-                "Outlook good.",
-                "Yes.",
-                "Signs point to yes.",
-                "Reply hazy, try again.",
-                "Ask again later.",
-                "Better not tell you now.",
-                "Cannot predict now.",
-                "Concentrate and ask again.",
-                "Don't count on it.",
-                "My reply is no.",
-                "My sources say no.",
-                "Outlook not so good.",
-                "Very doubtful."]
+@client.tree.command(name="8ball", description="Ask the 8ball a question....")
+@app_commands.describe(question="Ask the 8ball a question")
+async def eightBall(interaction: discord.Interaction, *, question: str):
     
-    await ctx.send(f'{random.choice(responses)}')
+    if question:
+    
+        responses = ["It is certain.",
+                    "It is decidedly so.",
+                    "Without a doubt.",
+                    "Yes - definitely.",
+                    "You may rely on it.",
+                    "As I see it, yes.",
+                    "Most likely.",
+                    "Outlook good.",
+                    "Yes.",
+                    "Signs point to yes.",
+                    "Reply hazy, try again.",
+                    "Ask again later.",
+                    "Better not tell you now.",
+                    "Cannot predict now.",
+                    "Concentrate and ask again.",
+                    "Don't count on it.",
+                    "My reply is no.",
+                    "My sources say no.",
+                    "Outlook not so good.",
+                    "Very doubtful.",
+                    "No.",
+                    "No chance.",
+                    "Not a chance in hell.",
+                    "No way.",
+                    "You're joking right?",
+                    "You're having a laugh.",
+                    "You're having a giraffe.",
+                    "You're having a bubble.",
+                    "You're having a bubble bath.",
+                    "You're having a bubble and squeak.",
+                    "You're having a bubble and squeak with a side of mash.",
+                    "You're having a bubble and squeak with a side of mash and gravy.",
+                    "You're having a bubble and squeak with a side of mash, gravy and peas.",
+                    "You're having a bubble and squeak with a side of mash, gravy, peas and a yorkshire pudding.",
+                    "You're having a bubble and squeak with a side of mash, gravy, peas, a yorkshire pudding and a sausage.",
+                    "You're having a bubble and squeak with a side of mash, gravy, peas, a yorkshire pudding, a sausage and a roast chicken.",
+                    "You're having a bubble and squeak with a side of mash, gravy, peas, a yorkshire pudding, a sausage, a roast chicken and a beef joint.",
+                    "You're having a bubble and squeak with a side of mash, gravy, peas, a yorkshire pudding, a sausage, a roast chicken, a beef joint and a lamb joint.",
+                    "You're having a bubble and squeak with a side of mash, gravy, peas, a yorkshire pudding, a sausage, a roast chicken, a beef joint, a lamb joint and a pork joint.",
+                    ]
+        
+        embed = discord.Embed(
+            title = 'The 8ball answers....',
+            description = f'{random.choice(responses)}',
+            colour = discord.Colour.purple()
+        )
+        
+        embed.set_footer(text = f"Question '{question}' asked by {interaction.user}")
+            
+        await interaction.response.send_message(embed=embed, ephemeral=False)
+    
+    else:
+        await interaction.response.send_message("Please ask a question", ephemeral=True)
 
 
-@client.command(aliases=['ratemywilly'])
-async def _willyrate(ctx):
+@client.tree.command(name="ratemywilly", description="Neil will rate your willy")
+async def willyRate(interaction: discord.Interaction):
     responses = ["Its 12 inches long",
                 "Gigantic.",
                 "[Insert girlfriend name here] is very very lucky",
@@ -586,22 +615,35 @@ async def _willyrate(ctx):
                 "It's 5000 inches long!",
                 "It's 0.5 inches long."]
     
-    await ctx.send(f'{random.choice(responses)}')
-    #^ This picks and random statement to send as a response
+    embed = discord.Embed(
+        title = 'Neil has rated your willy....',
+        description = f'{random.choice(responses)}',
+        colour = discord.Colour.random()
+    )
+        
+    await interaction.response.send_message(embed=embed, ephemeral=False)
 
 
-@client.command(aliases=['howgayami'])
-async def howgay(ctx):
-    responses = ["Very",
-                "Too Gay",
-                "100%",
-                "0%",
-                "69%",
-                "As gay as Elliot Pomroy",
-                "Not gay at all",
-                "James Charles 2.0",]
+@client.tree.command(name='howgayami', description="Neil will rate how gay you are")
+async def howgay(interaction: discord.Interaction):
+    responses = ["very Gay",
+                "too Gay",
+                r"100% Gay",
+                r"0% Gay",
+                r"69% Gay",
+                "as gay as Elliot Pomroy",
+                "not gay at all",
+                "James Charles 2.0",
+                "as Gay as Matt C-C",
+                "Max Brundell"]
     
-    await ctx.send(f'{random.choice(responses)}')
+    embed = discord.Embed(
+        title = 'Neil has rated your gayness....',
+        description = f'You are {random.choice(responses)}',
+        colour = discord.Colour.blurple()
+    )
+        
+    await interaction.response.send_message(embed=embed, ephemeral=False)
 
 
 #To use this command, in discord type: "oioi dm [user's @] [message]" e.g. "oioi dm @benjamano hello"
