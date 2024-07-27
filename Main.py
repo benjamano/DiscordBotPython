@@ -33,6 +33,7 @@ try:
         PORT = int(f.readline())
         localConnection = f.readline().strip('\n')
         debugMode = f.readline().strip('\n')
+        password = f.readline().strip('\n')
         
         f.close()
         
@@ -202,9 +203,51 @@ async def on_ready():
         q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
 
     q.newline()
+    
+    if not await s.updatePlaytime("poo", 10):
+        await getDiscordID("poo")
+
 
 
 #------------------------------------------------------| Functions |------------------------------------------------------#
+
+
+
+async def getDiscordID(player):
+    try:
+        
+        with open("StoredData/hours.csv", mode="r") as csvf:
+            csvReader = csv.DictReader(csvf)
+            
+            data = list(csvReader)
+        
+        if any(player == row['username'] for row in data):
+            q.sendLogMessage(f"Found '{player}' in file, skipping record creation", type="info")
+        
+        else:
+            if not await s.createRecord(player, 0, 0):
+                q.sendLogMessage(f"Failed to create record for '{player}'", type="Error")
+                return None
+            
+        BenUserID = 321317643099439104
+        
+        user = await client.fetch_user(BenUserID)
+        
+        if user:
+            await user.send(f"Player '{player}' does not have a DiscordID stored. To add to the file, type /addid [password] {player} [DiscordID]")
+            
+            q.sendLogMessage(f"Sent DM to Ben.", type="Success")
+            
+        else:
+            q.sendLogMessage(f"User with ID {BenUserID} not found.", type="Error")
+    
+    except Exception as e:
+        q.sendLogMessage(f"Error getting discord ID for {player}: {e}", type="Error")
+        return None
+    
+    q.newline()
+    
+    return True
 
 
 # def s.checkPlaytimeCSV(username):
@@ -304,6 +347,9 @@ async def notifyPlaytime():
 @tasks.loop(seconds=600)
 async def checkPlaytime():
     try:
+        
+        q.newline()
+        
         if ServerConn == False:
             q.sendLogMessage("No server connection available, skipping playtime check.", type="Error")
             
@@ -323,47 +369,49 @@ async def checkPlaytime():
         if len(playerList) > 0:
         
             for player in playerList:
+                
+                if not await s.updateplaytime(player, 10):
+                        getDiscordID(player)
 
-                if ".mattcur" in player:
-                    s.updateplaytime(".mattcur", 10)
+                # if ".mattcur" in player:
+                #     if not s.updateplaytime(".mattcur", 10):
+                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
                     
-                    result = s.checkPlaytimeCSV(".mattcur")
+                #     result = s.checkPlaytimeCSV(".mattcur")
                     
-                    user = s.getUserID(player)
+                #     user = s.getUserID(player)
                     
-                elif "Jedi_Maxster" in player:
-                    s.updateplaytime("Jedi_Maxster", 10)
+                # elif "Jedi_Maxster" in player:
                     
-                    result = s.checkPlaytimeCSV("Jedi_Maxster")
+                    
+                #     result = s.checkPlaytimeCSV("Jedi_Maxster")
                      
-                    user = client.get_user(643840086114435082)
+                #     user = client.get_user(643840086114435082)
 
                 
-                elif "shortoctopus" in player:
-                    s.updateplaytime("shortoctopus", 10)
+                # elif "shortoctopus" in player:
+                #     if not s.updateplaytime(player, 10):
+                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
                     
-                    result = s.checkPlaytimeCSV("shortoctopus")
+                #     result = s.checkPlaytimeCSV("shortoctopus")
 
-                    user = client.get_user(499289163342938112)
+                #     user = client.get_user(499289163342938112)
                         
-                elif "Rugged__Base" in player:
-                    s.updateplaytime("Rugged__Base", 10)
+                # elif "Rugged__Base" in player:
+                #     if not s.updateplaytime(player, 10):
+                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
                     
-                    result = s.checkPlaytimeCSV("Rugged__Base")
+                #     result = s.checkPlaytimeCSV("Rugged__Base")
                      
-                    user = client.get_user(496388477361979402)
+                #     user = client.get_user(496388477361979402)
                 
-                elif "Benjamano" in player:
-                    s.updateplaytime("Benjamano", 10)
+                # elif "Benjamano" in player:
+                #     if not s.updateplaytime(player, 10):
+                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
                     
-                    result = s.checkPlaytimeCSV("Benjamano")
+                #     result = s.checkPlaytimeCSV("Benjamano")
                         
-                    user = client.get_user(321317643099439104)
-                
-                else:
-                    q.sendLogMessage(f"Player {player} not found in database, skipping", type="Warning")
-                    continue
-                        
+                #     user = client.get_user(321317643099439104)
         else:
             q.sendLogMessage("No players to update, none online")
     
@@ -373,11 +421,11 @@ async def checkPlaytime():
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
 async def resetPlaytime():
-    s.updateplaytime(".mattcur", 0, reset=True)
-    s.updateplaytime("Jedi_Maxster", 0, reset=True)
-    s.updateplaytime("shortoctopus", 0, reset=True)
-    s.updateplaytime("Rugged__Base", 0, reset=True)
-    s.updateplaytime("Benjamano", 0, reset=True)
+    await s.updatePlaytime(".mattcur", 0, reset=True)
+    await s.updatePlaytime("Jedi_Maxster", 0, reset=True)
+    await s.updatePlaytime("shortoctopus", 0, reset=True)
+    await s.updatePlaytime("Rugged__Base", 0, reset=True)
+    await s.updatePlaytime("Benjamano", 0, reset=True)
 
     
     #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))
@@ -394,6 +442,34 @@ async def on_command_error(ctx, error):
         await ctx.send("An error occurred. Please try again later.")
         q.sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
 
+
+@client.tree.command(name="addid", description="Ben Only")
+@app_commands.describe(inputpassword="Password", inputname="Name", inputuserid="UserID")
+async def addId(interaction:discord.Interaction,*, inputpassword: str, inputname: str, inputuserid: str):
+    try:
+        if inputpassword == password:
+            if inputname != "" and inputuserid != "" and inputuserid != 0 and len(str(inputuserid)) == 18:
+                q.sendLogMessage(f"User '{interaction.user}' has succesfully logged in. Attempting to add Discord ID '{inputuserid} to user {inputname}")
+                
+                if not await s.updateRecord(inputname, int(inputuserid)):
+                    q.sendLogMessage(f"Failed to update record for {inputname}", type="Error")
+                    await interaction.response.send_message("Failed to update record, check logs for more info.", ephemeral=True)
+                    
+                q.sendLogMessage(f"User {interaction.user} has added/updated {inputname} with a Discord ID of {inputuserid}", type="Success")
+                await interaction.response.send_message(f"Successfully added/updated {inputname} with a Discord ID of {inputuserid}", ephemeral=True)
+            
+            else:
+                q.sendLogMessage(f"User {interaction.user} tried to enter invalid data", type="Warning")
+                await interaction.response.send_message("Invalid data was entered.", ephemeral=True)
+        
+        else:
+            q.sendLogMessage(f"User {interaction.user} tried to run the add ID command with the wrong password", type="Warning")
+            await interaction.response.send_message("Incorrect Password, You do not have access to this.", ephemeral=True)
+    
+    except Exception as e:
+        q.sendLogMessage(f"Error running Add ID command: {e}", type="Error")
+        
+    q.newline()
 
 @client.tree.command(name="help", description="Displays a list of all possible commands")
 async def help(interaction:discord.Interaction):
