@@ -42,7 +42,7 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             
             data = list(csvReader)
             
-        if all(username not in row['username'] for row in data) and username != "":
+        if all(row['username'] not in username for row in data) and username != "":
             q.sendLogMessage(f"Could not find username '{username}' in file, notifying Ben through DMs", type="Warning")
             
             return None
