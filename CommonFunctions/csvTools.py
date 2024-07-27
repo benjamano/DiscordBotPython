@@ -56,7 +56,7 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
 
         for row in data:
             
-            q.sendLogMessage(f"Checking {row['username']} ({row})")
+            q.sendLogMessage(f"Updating {row['username']}")
             
             if row['username'] == username and reset == True:
                 row['minutesplayed'] = str(0)
