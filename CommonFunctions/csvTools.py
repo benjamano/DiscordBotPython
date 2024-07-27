@@ -65,7 +65,7 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
                 q.newline(baronly=True)
                 q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
             
-            else:                
+            elif row['username'] == username:                
                 row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
                 q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
                 q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
