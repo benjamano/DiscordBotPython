@@ -398,12 +398,20 @@ async def resetPlaytime():
 
 
 
-@client.tree.command(name="help")
+@client.tree.command(name="help", description="Displays a list of all commands")
 async def help(interaction:discord.Interaction):
     #TODO: Add a help command that lists all the commands and their descriptions
     
     try:
-        pass
+        embed = discord.Embed(
+            title = "Help",
+            description = "List of all commands",
+            colour = discord.Colour.blue()
+        )
+        
+        embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?" inline=False)
+        
+        await interaction.response.send_message(embed=embed,ephemeral=False)
     
     except Exception as e:
         sendLogMessage(f"Error running help command: {e}", type="Error")
