@@ -44,7 +44,7 @@ def newline(withDivider=True, baronly=False):
         return
     
     if withDivider:
-        print("-" * 20 + "+" + "-" * 70)
+        print("-" * 20 + "+" + "-" * 90)
     
     else:
-        print("-" * 91)
+        print("-" * 111)
