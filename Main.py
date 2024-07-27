@@ -203,9 +203,6 @@ async def on_ready():
         q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
 
     q.newline()
-    
-    if not await s.updatePlaytime("poo", 10):
-        await getDiscordID("poo")
 
 
 
@@ -370,7 +367,7 @@ async def checkPlaytime():
         
             for player in playerList:
                 
-                if not await s.updateplaytime(player, 10):
+                if not await s.updatePlaytime(player, 10):
                         getDiscordID(player)
 
                 # if ".mattcur" in player:
