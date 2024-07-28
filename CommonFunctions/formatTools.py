@@ -26,10 +26,10 @@ def sendLogMessage(message, type="Info", date=True, newline=False):
         messagetosend += "\n"
     
     if not date:
-        messagetosend += f"| {color}{type}{reset} : {message}"
+        messagetosend += f"| {color}{type.title()}{reset} : {message}"
         
     else:
-        messagetosend += f"{logtime} | {color}{type}{reset} : {message}"
+        messagetosend += f"{logtime} | {color}{type.title()}{reset} : {message}"
 
     print(messagetosend)
     

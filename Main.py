@@ -11,6 +11,7 @@ import csv
 import CommonFunctions.formatTools as q
 import CommonFunctions.csvTools as s
 import CommonFunctions.discordTools as d
+import time
 
 intents = discord.Intents.all()
 
@@ -202,8 +203,6 @@ async def on_ready():
             
     except Exception as e:
         q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
-
-    q.newline()
     
     # history = await d.getHistoryofChannel(1248394904833495160, client)
     
@@ -260,10 +259,11 @@ async def notifyPlaytime():
 @tasks.loop(seconds=600)
 async def checkPlaytime():
     try:
+        
+        q.newline()
+        
         if ServerConn == False:
             q.sendLogMessage("No server connection available, skipping playtime check.", type="Error")
-            
-            q.newline()
             
             return
         
@@ -316,15 +316,37 @@ async def on_command_error(ctx, error):
 @client.tree.command(name="selectmovie", description="Selects a random movie from the 'Movie Suggestions' channel")
 async def selectMovie(interaction: discord.Interaction):
     try:
+        q.newline()
+        
+        try:
+            start_time = time.time()
+            
+        except Exception as e:
+            q.sendLogMessage(f"Error starting timer: {e}", type="Error")
         
         #await interaction.response.send_message("Selecting a movie...", ephemeral=False)
         
         await interaction.response.defer(thinking=True)
         
-        selection = await d.pickMovie(client)
+        selection, userName = await d.pickMovie(client)
         
         if selection:
-            await interaction.followup.send(f"The movie selected is: {selection}", ephemeral=True)
+            embed = discord.Embed(
+                title = "The movie selected is:",
+                description = f"{str(selection).title()} requested by {userName}",
+                colour = discord.Colour.random()
+            )
+            
+            try:
+                end_time = time.time()
+                duration = end_time - start_time
+                
+                embed.set_footer(text = f"Time taken to process request: {round(duration, 2)} seconds")
+            
+            except:
+                q.sendLogMessage(f"Error setting footer: {e}", type="Error")
+            
+            await interaction.followup.send(embed=embed)
             
         else:
             q.sendLogMessage("An error occurred while selecting a movie, no movie was returned!", type="Error")
@@ -333,7 +355,7 @@ async def selectMovie(interaction: discord.Interaction):
     except Exception as e:
         q.sendLogMessage(f"An error occured while selecting a movie: {e}", type="Error")
         try:
-            await interaction.response.send_message(f"An error occurred while selecting a movie, please try again later. ({e})", ephemeral=True)
+            await interaction.followup.send(f"An error occurred while selecting a movie, please try again later. ({e})", ephemeral=True)
         except:
             pass
 

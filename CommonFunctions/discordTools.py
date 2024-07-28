@@ -2,7 +2,7 @@ import CommonFunctions.formatTools as q
 import CommonFunctions.csvTools as s
 import csv
 import random
-
+import asyncio
 
 
 async def getDiscordID(player, client):
@@ -69,7 +69,7 @@ async def getHistoryofChannel(channelID, client):
         
         async for message in channel.history(limit=50):
             
-            messageData = [message.content, message.id]
+            messageData = [message.content, message.id, message.author.name]
             history.append(messageData)
         
         upvoteHistory = []
@@ -85,8 +85,12 @@ async def getHistoryofChannel(channelID, client):
                     
                 else:
                     emoji_name = f"<:{emoji.name}:{emoji.id}>" 
+                    
+                if emoji_name == "✅" and reaction.count > 0:
+                    q.sendLogMessage(f"Message {message[1]} has been marked as watched, Skipping.", type="Success")
+                    pass
                 
-                if emoji_name == "<:upvote:727485131740414002>" and reaction.count > 1:
+                elif emoji_name == "<:upvote:727485131740414002>" and reaction.count > 1:
                     upvoteHistory.append(message)
         
         return upvoteHistory
@@ -109,12 +113,17 @@ async def pickMovie(client):
             
             # for message in history:
             #     q.sendLogMessage(f"MessageID: {message[1]}, Contents: {message[0]}", type="Success")
-                
             choice = random.choice([message[0] for message in history])
             
+            messageID = [message[1] for message in history if message[0] == choice][0]
+            
+            userName = [message[2] for message in history if message[0] == choice][0]
+            
+            await markAsWatched(messageID, moviesuggestionschannelID, client)
+        
             q.sendLogMessage(f"Picked movie: {choice}", type="Success")
             
-            return choice
+            return choice, userName
         
         else:
             q.sendLogMessage("Failed to get history of channel, nothing was returned.", type="Error")
@@ -128,4 +137,34 @@ async def pickMovie(client):
     
     return None
     
+
+
+async def markAsWatched(messageID, channelID, client):
+    complete = False
+    tries = 0
     
+    while complete == False:
+
+        try:
+            emoji = "✅"
+            
+            message = await client.get_channel(channelID).fetch_message(messageID)
+            
+            await message.add_reaction(emoji)
+            
+            q.sendLogMessage(f"Marked message {messageID} as watched", type="Success")
+            
+            complete = True    
+        
+        except Exception as e:
+            tries += 1
+            
+            if tries <= 5:
+                q.sendLogMessage(f"Error marking message {messageID} as watched, may have been run in a different channel, trying again in 10 Seconds ({e})", type="Warning")
+                
+                await asyncio.sleep(10)
+            
+            elif tries == 6:
+                q.sendLogMessage(f"Error marking message {messageID} as watched, max tries reached, aborting. ({e})", type="Error")
+                
+                return 
