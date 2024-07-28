@@ -10,6 +10,7 @@ from mctools import RCONClient, QUERYClient
 import csv
 import CommonFunctions.formatTools as q
 import CommonFunctions.csvTools as s
+import CommonFunctions.discordTools as d
 
 intents = discord.Intents.all()
 
@@ -204,102 +205,17 @@ async def on_ready():
 
     q.newline()
     
-    history = await getHistoryofChannel(1248394904833495160)
+    # history = await d.getHistoryofChannel(1248394904833495160, client)
     
-    q.sendLogMessage(f"{history}")
+    # q.sendLogMessage(f"{history}")
     
-    for message in history:
-        q.sendLogMessage(f"MessageID: {message.split(' : ')[0]} has {message.split(' : ')[2]} upvotes")
+    # for message in history:
+    #     q.sendLogMessage(f"MessageID: {message.split(' : ')[0]} has {message.split(' : ')[2]} upvotes")
 
 
 
 #------------------------------------------------------| Functions |------------------------------------------------------#
 
-
-
-async def getDiscordID(player):
-    try:
-        
-        with open("StoredData/hours.csv", mode="r") as csvf:
-            csvReader = csv.DictReader(csvf)
-            
-            data = list(csvReader)
-        
-        if any(player == row['username'] for row in data):
-            q.sendLogMessage(f"Found '{player}' in file, skipping record creation", type="info")
-        
-        else:
-            if not await s.createRecord(player, 0, 0):
-                q.sendLogMessage(f"Failed to create record for '{player}'", type="Error")
-                return None
-            
-        BenUserID = 321317643099439104
-        
-        user = await client.fetch_user(BenUserID)
-        
-        if user:
-            await user.send(f"Player '{player}' does not have a DiscordID stored. To add to the file, type /addid [password] {player} [DiscordID]")
-            
-            q.sendLogMessage(f"Sent DM to Ben.", type="Success")
-            
-        else:
-            q.sendLogMessage(f"User with ID {BenUserID} not found.", type="Error")
-    
-    except Exception as e:
-        q.sendLogMessage(f"Error getting discord ID for {player}: {e}", type="Error")
-        return None
-    
-    q.newline()
-    
-    return True
-
-
-async def getReactionsbyID(messageID, channelID):
-    try:
-        channel = client.get_channel(channelID)
-        
-        message = await channel.fetch_message(messageID)
-        
-        reactions = message.reactions
-        
-        return reactions
-    
-    except Exception as e:
-        q.sendLogMessage(f"Error getting reactions for message {messageID} in channel {channelID}: {e}", type="Error")
-        return None
-    
-async def getHistoryofChannel(channelID):
-    try:
-        channel = client.get_channel(channelID)
-        
-        history = []
-        
-        async for message in channel.history(limit=300):
-            
-            history.append(f"{message.id}")
-        
-        upvoteHistory = []
-        
-        for message in history:
-            reactions = await getReactionsbyID(message, channelID)
-            
-            for reaction in reactions:
-                emoji = reaction.emoji
-                
-                if isinstance(emoji, str):
-                    emoji_name = emoji 
-                    
-                else:
-                    emoji_name = f"<:{emoji.name}:{emoji.id}>" 
-                
-                if emoji_name == "<:upvote:727485131740414002>":
-                    upvoteHistory.append(f"{message} : upvote : {reaction.count}")
-        
-        return upvoteHistory
-    
-    except Exception as e:
-        q.sendLogMessage(f"Error getting history of channel {channelID}: {e}", type="Error")
-        return None
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
 
@@ -344,9 +260,6 @@ async def notifyPlaytime():
 @tasks.loop(seconds=600)
 async def checkPlaytime():
     try:
-        
-        q.newline()
-        
         if ServerConn == False:
             q.sendLogMessage("No server connection available, skipping playtime check.", type="Error")
             
@@ -368,7 +281,7 @@ async def checkPlaytime():
             for player in playerList:
                 
                 if not await s.updatePlaytime(player, 10):
-                        await getDiscordID(player)
+                        await d.getDiscordID(player, client)
         else:
             q.sendLogMessage("No players to update, none online")
     
@@ -398,6 +311,31 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send("An error occurred. Please try again later.")
         q.sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
+
+
+@client.tree.command(name="selectmovie", description="Selects a random movie from the 'Movie Suggestions' channel")
+async def selectMovie(interaction: discord.Interaction):
+    try:
+        
+        #await interaction.response.send_message("Selecting a movie...", ephemeral=False)
+        
+        await interaction.response.defer(thinking=True)
+        
+        selection = await d.pickMovie(client)
+        
+        if selection:
+            await interaction.followup.send(f"The movie selected is: {selection}", ephemeral=True)
+            
+        else:
+            q.sendLogMessage("An error occurred while selecting a movie, no movie was returned!", type="Error")
+            await interaction.followup.send("An error occurred while selecting a movie, please try again later.", ephemeral=True)
+    
+    except Exception as e:
+        q.sendLogMessage(f"An error occured while selecting a movie: {e}", type="Error")
+        try:
+            await interaction.response.send_message(f"An error occurred while selecting a movie, please try again later. ({e})", ephemeral=True)
+        except:
+            pass
 
 
 @client.tree.command(name="addid", description="Ben Only")
