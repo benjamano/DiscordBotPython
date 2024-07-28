@@ -46,12 +46,12 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             
             csvf.close()
             
-        if all(row['username'] not in username for row in data) and username != "":
+        if all(row['username'] not in username for row in data) and username != "" and username != "[0m":
             q.sendLogMessage(f"Could not find username '{username}' in file, notifying Ben through DMs", type="Warning")
             
             return None
         
-        if any(row['username'] == username and str(row['discorduserid']) == "0" for row in data):
+        if all(row['username'] == username and str(row['discorduserid']) == "0" for row in data) and username != "[0m":
             q.sendLogMessage(f"Discord ID is empty for user: {username}, getting Discord ID through Ben using DMs", type="Warning")
             
             return None
