@@ -63,6 +63,8 @@ async def getHistoryofChannel(channelID, client):
     try:
         channel = client.get_channel(channelID)
         
+        q.sendLogMessage(f"Fetching history of '{channel.name}' channel (50 Messages MAX)")
+        
         history = []
         
         async for message in channel.history(limit=50):
@@ -97,18 +99,16 @@ async def getHistoryofChannel(channelID, client):
 
 async def pickMovie(client):
     try:
-    
-        q.sendLogMessage("Fetching history of movie suggestions channel")
         
         moviesuggestionschannelID = 1248394904833495160
         
         history = await getHistoryofChannel(moviesuggestionschannelID, client)
         
         if history:
-            q.sendLogMessage(f"Got history of channel {moviesuggestionschannelID}", type="Success")
+            q.sendLogMessage(f"Got history of channel, picking random movie", type="Success")
             
-            for message in history:
-                q.sendLogMessage(f"MessageID: {message[1]}, Contents: {message[0]}", type="Success")
+            # for message in history:
+            #     q.sendLogMessage(f"MessageID: {message[1]}, Contents: {message[0]}", type="Success")
                 
             choice = random.choice([message[0] for message in history])
             
