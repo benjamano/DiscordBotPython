@@ -10,6 +10,8 @@ from mctools import RCONClient, QUERYClient
 import csv
 import CommonFunctions.formatTools as q
 import CommonFunctions.csvTools as s
+import CommonFunctions.discordTools as d
+import time
 
 intents = discord.Intents.all()
 
@@ -201,104 +203,17 @@ async def on_ready():
             
     except Exception as e:
         q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
-
-    q.newline()
+    
+    # history = await d.getHistoryofChannel(1248394904833495160, client)
+    
+    # q.sendLogMessage(f"{history}")
+    
+    # for message in history:
+    #     q.sendLogMessage(f"MessageID: {message.split(' : ')[0]} has {message.split(' : ')[2]} upvotes")
 
 
 
 #------------------------------------------------------| Functions |------------------------------------------------------#
-
-
-
-async def getDiscordID(player):
-    try:
-        
-        with open("StoredData/hours.csv", mode="r") as csvf:
-            csvReader = csv.DictReader(csvf)
-            
-            data = list(csvReader)
-        
-        if any(player == row['username'] for row in data):
-            q.sendLogMessage(f"Found '{player}' in file, skipping record creation", type="info")
-        
-        else:
-            if not await s.createRecord(player, 0, 0):
-                q.sendLogMessage(f"Failed to create record for '{player}'", type="Error")
-                return None
-            
-        BenUserID = 321317643099439104
-        
-        user = await client.fetch_user(BenUserID)
-        
-        if user:
-            await user.send(f"Player '{player}' does not have a DiscordID stored. To add to the file, type /addid [password] {player} [DiscordID]")
-            
-            q.sendLogMessage(f"Sent DM to Ben.", type="Success")
-            
-        else:
-            q.sendLogMessage(f"User with ID {BenUserID} not found.", type="Error")
-    
-    except Exception as e:
-        q.sendLogMessage(f"Error getting discord ID for {player}: {e}", type="Error")
-        return None
-    
-    q.newline()
-    
-    return True
-
-
-# def s.checkPlaytimeCSV(username):
-#     shame = False
-    
-#     with open("StoredData/hours.csv", mode="r") as csvf:
-#         csvReader = csv.DictReader(csvf)
-        
-#         q.newline(baronly=True)
-        
-#         q.sendLogMessage(f"Searching for playtime of user: {username}")
-        
-#         for row in csvReader:
-#             if row['username'] == username:
-#                 playerPlaytime = int(row['minutesplayed'])
-#                 q.sendLogMessage(f"Found {username} with {playerPlaytime} minutes played", type="Success")
-#                 break
-    
-#     if playerPlaytime == 360 or playerPlaytime == 420 or playerPlaytime == 480 or playerPlaytime == 540:
-#         shame = True
-    
-#     q.newline()
-    
-#     return playerPlaytime, shame
-
-
-# def s.s.updateplaytime(username, additionalMinutes, reset = False):
-    
-#     #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
-    
-#     with open("StoredData/hours.csv", mode="r") as csvf:
-#         csvReader = csv.DictReader(csvf)
-        
-#         data = list(csvReader)
-
-#     for row in data:   
-#         if row['username'] == username and reset == True:
-#             row['minutesplayed'] = str(0)
-#             q.newline(baronly=True)
-#             q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
-        
-#         elif str(username) in str(row["username"]) and reset == False:
-#             row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-#             q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
-#             q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
-    
-#     with open("StoredData/hours.csv", mode="w", newline='') as csvf:
-#         fieldnames = ['username', 'minutesplayed']
-        
-#         csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
-        
-#         csvWriter.writeheader()
-#         csvWriter.writerows(data)
-
 
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
@@ -350,8 +265,6 @@ async def checkPlaytime():
         if ServerConn == False:
             q.sendLogMessage("No server connection available, skipping playtime check.", type="Error")
             
-            q.newline()
-            
             return
         
         qry.start()
@@ -368,47 +281,7 @@ async def checkPlaytime():
             for player in playerList:
                 
                 if not await s.updatePlaytime(player, 10):
-                        await getDiscordID(player)
-
-                # if ".mattcur" in player:
-                #     if not s.updateplaytime(".mattcur", 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV(".mattcur")
-                    
-                #     user = s.getUserID(player)
-                    
-                # elif "Jedi_Maxster" in player:
-                    
-                    
-                #     result = s.checkPlaytimeCSV("Jedi_Maxster")
-                     
-                #     user = client.get_user(643840086114435082)
-
-                
-                # elif "shortoctopus" in player:
-                #     if not s.updateplaytime(player, 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV("shortoctopus")
-
-                #     user = client.get_user(499289163342938112)
-                        
-                # elif "Rugged__Base" in player:
-                #     if not s.updateplaytime(player, 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV("Rugged__Base")
-                     
-                #     user = client.get_user(496388477361979402)
-                
-                # elif "Benjamano" in player:
-                #     if not s.updateplaytime(player, 10):
-                #         q.sendLogMessage(f"Failed to update playtime for {player}", type="Error")
-                    
-                #     result = s.checkPlaytimeCSV("Benjamano")
-                        
-                #     user = client.get_user(321317643099439104)
+                        await d.getDiscordID(player, client)
         else:
             q.sendLogMessage("No players to update, none online")
     
@@ -438,6 +311,53 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send("An error occurred. Please try again later.")
         q.sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
+
+
+@client.tree.command(name="selectmovie", description="Selects a random movie from the 'Movie Suggestions' channel")
+async def selectMovie(interaction: discord.Interaction):
+    try:
+        q.newline()
+        
+        try:
+            start_time = time.time()
+            
+        except Exception as e:
+            q.sendLogMessage(f"Error starting timer: {e}", type="Error")
+        
+        #await interaction.response.send_message("Selecting a movie...", ephemeral=False)
+        
+        await interaction.response.defer(thinking=True)
+        
+        selection, userName = await d.pickMovie(client)
+        
+        if selection:
+            embed = discord.Embed(
+                title = "The movie selected is:",
+                description = f"{str(selection).title()} requested by {userName}",
+                colour = discord.Colour.random()
+            )
+            
+            try:
+                end_time = time.time()
+                duration = end_time - start_time
+                
+                embed.set_footer(text = f"Time taken to process request: {round(duration, 2)} seconds")
+            
+            except:
+                q.sendLogMessage(f"Error setting footer: {e}", type="Error")
+            
+            await interaction.followup.send(embed=embed)
+            
+        else:
+            q.sendLogMessage("An error occurred while selecting a movie, no movie was returned!", type="Error")
+            await interaction.followup.send("An error occurred while selecting a movie, please try again later.", ephemeral=True)
+    
+    except Exception as e:
+        q.sendLogMessage(f"An error occured while selecting a movie: {e}", type="Error")
+        try:
+            await interaction.followup.send(f"An error occurred while selecting a movie, please try again later. ({e})", ephemeral=True)
+        except:
+            pass
 
 
 @client.tree.command(name="addid", description="Ben Only")
