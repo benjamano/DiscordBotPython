@@ -203,13 +203,6 @@ async def on_ready():
             
     except Exception as e:
         q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
-    
-    # history = await d.getHistoryofChannel(1248394904833495160, client)
-    
-    # q.sendLogMessage(f"{history}")
-    
-    # for message in history:
-    #     q.sendLogMessage(f"MessageID: {message.split(' : ')[0]} has {message.split(' : ')[2]} upvotes")
 
 
 
