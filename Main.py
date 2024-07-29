@@ -217,42 +217,46 @@ class RestartButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         view = self.view
-        
+      
         userID = interaction.user.id
         
-        if userID not in self.view.clicked_users:
-            self.view.clicked_users.add(userID)
+        if userID not in view.clicked_users:
+            view.clicked_users.add(userID)
+          
+            remaining_users = 2 - len(view.clicked_users)
             
-            if len(self.view.clicked_users) >= 1:
-                
+            if len(view.clicked_users) >= 2:
                 q.sendLogMessage("Restart Button clicked by two different users! Restarting Server...", type="Success")
+              
                 view.clicked_users.clear()
                 
-                await interaction.response.send_message("Restart Button clicked by two different users! Restarting server in 2 minutes.")
+                await interaction.response.edit_message(content="Restart Button clicked by two different users! Restarting server in 2 minutes.")
                 
                 if localConnection == 'True':
                     try:
-                
                         if await r.RestartServer(rcon, 120):
                             return True
-                        
+                     
                         else:
                             q.sendLogMessage("Failed to restart server", type="Error")
+                           
                             return None
-                        
+                  
                     except Exception as e:
                         q.sendLogMessage(f"Error restarting server: {e}", type="Error")
+                        
                         return None
                     
                 else:
                     q.sendLogMessage("Bot is outside of the network RCON connection unavailable, skipping server restart.", type="Warning")
+                    
                     return None
-                
+           
             else:
-                q.sendLogMessage(f"Restart Button clicked by {len(self.view.clicked_users)} user(s). One more user required to trigger restart.", type="Info")
+                q.sendLogMessage(f"Restart Button clicked by {len(view.clicked_users)} user(s). {remaining_users} more user(s) required to trigger restart.", type="Info")
                 
-                await interaction.response.send_message(f"Restart Button clicked by {len(self.view.clicked_users)} user(s). One more user required to trigger restart.", ephemeral=True)
-                
+                await interaction.response.edit_message(content=f"Restart Button clicked by {len(view.clicked_users)} user(s). {remaining_users} more user(s) required to trigger restart.")
+        
         else:
             await interaction.response.send_message("You've already clicked the button! Waiting for another user.", ephemeral=True)
 
