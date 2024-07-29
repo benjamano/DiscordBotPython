@@ -225,7 +225,7 @@ class RestartButton(discord.ui.Button):
           
             remaining_users = 2 - len(view.clicked_users)
             
-            if len(view.clicked_users) >= 2:
+            if len(view.clicked_users) == 2:
                 q.sendLogMessage("Restart Button clicked by two different users! Restarting Server...", type="Success")
               
                 view.clicked_users.clear()
