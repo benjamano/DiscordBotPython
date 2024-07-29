@@ -67,7 +67,7 @@ async def on_ready():
     
     global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses
     
-    if debugMode:
+    if debugMode == True:
         statuses = cycle([f'Running in Debug mode on branch {Branch}',])
     else:
         statuses = cycle(['Back from the dead!','/help',])
