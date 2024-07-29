@@ -373,7 +373,7 @@ async def restartServer(interaction: discord.Interaction):
     try:
         q.newline()
         
-        q.sendLogMessage(f"Restart button command triggers by {interaction.user}", type="Warning")
+        q.sendLogMessage(f"Restart button command triggered by {interaction.user}", type="Warning")
         
         await interaction.response.send_message("To restart the server, click the button below", view=RestartView())
     

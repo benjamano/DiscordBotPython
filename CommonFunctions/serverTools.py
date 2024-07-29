@@ -7,11 +7,11 @@ async def RestartServer(rcon, seconds = 120):
     
     try:
         
-        await rcon.sendCommand(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
+        await rcon.command(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
         
         await asyncio.sleep(seconds)
         
-        await rcon.sendCommand("stop")
+        await rcon.command("stop")
         
         await asyncio.sleep(30)
         
