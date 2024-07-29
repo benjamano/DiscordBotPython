@@ -253,9 +253,9 @@ class RestartButton(discord.ui.Button):
                     return None
            
             else:
-                q.sendLogMessage(f"Restart Button clicked by {len(view.clicked_users)} user(s). {remaining_users} more user(s) required to trigger restart.", type="Info")
+                q.sendLogMessage(f"Restart Button clicked by {len(view.clicked_users)} people. {remaining_users} more people required to trigger restart.", type="Info")
                 
-                await interaction.response.edit_message(content=f"Restart Button clicked by {len(view.clicked_users)} user(s). {remaining_users} more user(s) required to trigger restart.")
+                await interaction.response.edit_message(content=f"Restart Button clicked by {len(view.clicked_users)} people. {remaining_users} more people required to trigger restart.")
         
         else:
             await interaction.response.send_message("You've already clicked the button! Waiting for another user.", ephemeral=True)
