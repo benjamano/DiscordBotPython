@@ -11,6 +11,7 @@ import csv
 import CommonFunctions.formatTools as q
 import CommonFunctions.csvTools as s
 import CommonFunctions.discordTools as d
+import CommonFunctions.serverTools as r
 import time
 
 intents = discord.Intents.all()
@@ -206,7 +207,61 @@ async def on_ready():
 
 
 
-#------------------------------------------------------| Functions |------------------------------------------------------#
+#--------------------------------------------------| Functions / Classes |-------------------------------------------------#
+
+
+
+class RestartButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(label="Restart Server", style=discord.ButtonStyle.green, custom_id="btnRestartServer")
+
+    async def callback(self, interaction: discord.Interaction):
+        view = self.view
+        
+        userID = interaction.user.id
+        
+        if userID not in self.view.clicked_users:
+            self.view.clicked_users.add(userID)
+            
+            if len(self.view.clicked_users) >= 1:
+                
+                q.sendLogMessage("Restart Button clicked by two different users! Restarting Server...", type="Success")
+                view.clicked_users.clear()
+                
+                await interaction.response.send_message("Restart Button clicked by two different users! Restarting server in 2 minutes.")
+                
+                if localConnection == 'True':
+                    try:
+                
+                        if await r.RestartServer(rcon, 120):
+                            return True
+                        
+                        else:
+                            q.sendLogMessage("Failed to restart server", type="Error")
+                            return None
+                        
+                    except Exception as e:
+                        q.sendLogMessage(f"Error restarting server: {e}", type="Error")
+                        return None
+                    
+                else:
+                    q.sendLogMessage("Bot is outside of the network RCON connection unavailable, skipping server restart.", type="Warning")
+                    return None
+                
+            else:
+                q.sendLogMessage(f"Restart Button clicked by {len(self.view.clicked_users)} user(s). One more user required to trigger restart.", type="Info")
+                
+                await interaction.response.send_message(f"Restart Button clicked by {len(self.view.clicked_users)} user(s). One more user required to trigger restart.", ephemeral=True)
+                
+        else:
+            await interaction.response.send_message("You've already clicked the button! Waiting for another user.", ephemeral=True)
+
+
+class RestartView(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.clicked_users = set()
+        self.add_item(RestartButton())
 
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
@@ -299,13 +354,31 @@ async def resetPlaytime():
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send("Command not found. Please use a valid command. Use `/help` for a list of commands.")
         q.sendLogMessage(f"{ctx.author} sent a command that doesn't exist: '{ctx.message.content}'", type="Error")
+        
+        await ctx.send("Command not found. Please use a valid command. Use `/help` for a list of commands.")
+    
     else:
-        await ctx.send("An error occurred. Please try again later.")
         q.sendLogMessage(f"Error occured while running command {ctx.command} run by {ctx.author} : Error: {error}", type="Error")
+        
+        await ctx.send("An error occurred. Please try again later.")
 
 
+@client.tree.command(name="restartserver", description="Restarts the Minecraft Server")
+async def restartServer(interaction: discord.Interaction):
+    try:
+        q.newline()
+        
+        q.sendLogMessage(f"Restart button command triggers by {interaction.user}", type="Warning")
+        
+        await interaction.response.send_message("To restart the server, click the button below", view=RestartView())
+    
+    except Exception as e:
+        q.sendLogMessage(f"Error sending restart button: {e}", type="Error")
+        
+        await interaction.response.send_message(f"Error restarting server, try again later.", ephemeral=True)
+
+        
 @client.tree.command(name="selectmovie", description="Selects a random movie from the 'Movie Suggestions' channel")
 async def selectMovie(interaction: discord.Interaction):
     try:
