@@ -125,9 +125,13 @@ async def on_ready():
     
     tries = 0
     
-    channel = client.get_channel(TestServerID)
-    if channel:
-        await channel.send(f"```Succesfully Started @ {datetime.datetime.now()} \nVersion: {VersionNo} ({Branch})```")
+    embed = discord.Embed(
+        title = "Bot Started",
+        description = f"Bot has started successfully\nVersion: {VersionNo} ({Branch})",
+        colour = discord.Colour.green()
+    )
+    
+    await d.sendMessage(client, ChannelID=TestServerID, embed=embed)
         
     while ServerConn == False:
         try:
@@ -469,9 +473,11 @@ async def help(interaction:discord.Interaction):
             colour = discord.Colour.blue()
         )
         
-        embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?", inline=False)
+        embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`selectmovie` - Randomly selects a movie from the 'movie suggestions' channel\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?", inline=False)
         
-        await interaction.response.send_message(embed=embed,ephemeral=False)
+        await d.sendMessage(client, interaction=interaction, embed=embed)
+        
+        #await interaction.response.send_message(embed=embed,ephemeral=False)
     
     except Exception as e:
         q.sendLogMessage(f"Error running help command: {e}", type="Error")

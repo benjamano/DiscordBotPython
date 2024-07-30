@@ -168,3 +168,78 @@ async def markAsWatched(messageID, channelID, client):
                 q.sendLogMessage(f"Error marking message {messageID} as watched, max tries reached, aborting. ({e})", type="Error")
                 
                 return 
+            
+async def sendMessage(client, message=None, UserID=None, ChannelID=None, embed=None, interaction=None):
+    try:
+        if UserID and not interaction:
+            try:
+                user = client.fetch_user(UserID)
+                
+                if embed and not message:
+                    await user.send_message(embed=embed)
+                    
+                    return True
+                
+                elif message and not embed:
+                    await user.send_message(message)
+                    
+                    return True
+                
+                else:
+                    q.sendLogMessage(f"Error sending message to user {UserID}: No message or embed provided.", type="Error")
+                    
+                    return None
+            
+            except Exception as e:
+                q.sendLogMessage(f"Error fetching user {UserID}: {e}", type="Error")
+                return None
+            
+        elif ChannelID and not interaction:
+            try:
+                channel = client.get_channel(ChannelID)
+                
+                if embed and not message:
+                    await channel.send(embed=embed)
+                    
+                    return True
+                
+                elif message and not embed:
+                    await channel.send(message)
+                    
+                    return True
+            
+            except Exception as e:
+                q.sendLogMessage(f"Error sending message to channel {ChannelID}: {e}", type="Error")
+                
+                return None
+        
+        elif interaction and not UserID and not ChannelID:
+            
+            if embed and not message:
+                try:
+                    await interaction.response.send_message(embed=embed)
+                    
+                    return True
+                
+                except Exception as e:
+                    q.sendLogMessage(f"Error sending interaction message with embed: {e}", type="Error")
+                    return None
+            
+            elif message and not embed:
+                try:
+                
+                    await interaction.response.send_message(message)
+                    
+                    return True
+
+                except Exception as e:
+                    q.sendLogMessage(f"Error sending interaction message: {e}", type="Error")
+                    return None
+                    
+        else:
+            q.sendLogMessage(f"Error sending message: No valid parameters provided.", type="Error")
+            
+    except Exception as e:
+        q.sendLogMessage(f"Error sending message: {e}", type="Error")
+        
+        return None
