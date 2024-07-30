@@ -436,9 +436,11 @@ async def selectMovie(interaction: discord.Interaction):
 @app_commands.describe(inputpassword="Password", inputname="Name", inputuserid="UserID")
 async def addId(interaction:discord.Interaction,*, inputpassword: str, inputname: str, inputuserid: str):
     try:
+        q.newline()
+        
         if inputpassword == password:
             if inputname != "" and inputuserid != "" and inputuserid != 0 and len(str(inputuserid)) == 18:
-                q.sendLogMessage(f"User '{interaction.user}' has succesfully logged in. Attempting to add Discord ID '{inputuserid} to user {inputname}")
+                q.sendLogMessage(f"User '{interaction.user}' has succesfully logged in.")
                 
                 if not await s.updateRecord(inputname, int(inputuserid)):
                     q.sendLogMessage(f"Failed to update record for {inputname}", type="Error")
@@ -555,8 +557,13 @@ async def totalplaytime(interaction: discord.Interaction):
             
             playTime = ""
             
+            playersignored = 0
+            
             for row in data:
-                playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
+                if row["minutesplayed"] != '0':
+                    playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
+                else:
+                    playersignored += 1
         
         embed = discord.Embed(
             title = "Total Playtime for each player today",
@@ -564,7 +571,7 @@ async def totalplaytime(interaction: discord.Interaction):
             colour = discord.Colour.green()
         )
         
-        embed.set_footer(text = f'Ping: {round(client.latency * 1000)}ms')
+        embed.set_footer(text = f'Ping: {round(client.latency * 1000)}ms\n{playersignored} players have not played today')
         
         csvf.close()
         
