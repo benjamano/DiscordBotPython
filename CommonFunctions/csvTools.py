@@ -35,7 +35,7 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
     
     try:
         
-        q.newline(baronly=True)
+        q.newline()
     
         #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
         
