@@ -571,7 +571,7 @@ async def totalplaytime(interaction: discord.Interaction):
             colour = discord.Colour.green()
         )
         
-        embed.set_footer(text = f'Ping: {round(client.latency * 1000)}ms\n{playersignored} players have not played today')
+        embed.set_footer(text = f"{playersignored} {'players have' if playersignored > 1 else 'player has'} not played today")
         
         csvf.close()
         
