@@ -332,6 +332,8 @@ async def checkPlaytime():
         
             for player in playerList:
                 
+                player = player.strip("[0m")
+                
                 if not await s.updatePlaytime(player, 10):
                         await d.getDiscordID(player, client)
         else:
