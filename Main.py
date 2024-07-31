@@ -66,7 +66,10 @@ except Exception as e:
 @client.event
 async def on_ready():
     
-    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses
+    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses, disc, server
+    
+    disc = d.DiscordTools(client)
+    server = r.ServerTools(rcon)
     
     if debugMode == True:
         statuses = cycle([f'Running in Debug mode on branch {Branch}',])
@@ -125,9 +128,13 @@ async def on_ready():
     
     tries = 0
     
-    channel = client.get_channel(TestServerID)
-    if channel:
-        await channel.send(f"```Succesfully Started @ {datetime.datetime.now()} \nVersion: {VersionNo} ({Branch})```")
+    embed = discord.Embed(
+        title = "Bot Started",
+        description = f"Bot has started successfully\nVersion: {VersionNo} ({Branch})",
+        colour = discord.Colour.green()
+    )
+    
+    await disc.sendMessage(ChannelID=TestServerID, embed=embed)
         
     while ServerConn == False:
         try:
@@ -234,7 +241,7 @@ class RestartButton(discord.ui.Button):
                 
                 if localConnection == 'True':
                     try:
-                        if await r.RestartServer(rcon, 120):
+                        if await r.RestartServer(120):
                             return True
                      
                         else:
@@ -342,7 +349,7 @@ async def checkPlaytime():
                 player = player.strip("[0m")
                 
                 if not await s.updatePlaytime(player, 10):
-                        await d.getDiscordID(player, client)
+                        await disc.getDiscordID(player, client)
         else:
             q.sendLogMessage("No players to update, none online")
     
@@ -407,7 +414,7 @@ async def selectMovie(interaction: discord.Interaction):
         
         await interaction.response.defer(thinking=True)
         
-        selection, userName = await d.pickMovie(client)
+        selection, userName = await disc.pickMovie()
         
         if selection:
             embed = discord.Embed(
@@ -480,9 +487,11 @@ async def help(interaction:discord.Interaction):
             colour = discord.Colour.blue()
         )
         
-        embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?", inline=False)
+        embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`selectmovie` - Randomly selects a movie from the 'movie suggestions' channel\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?", inline=False)
         
-        await interaction.response.send_message(embed=embed,ephemeral=False)
+        await disc.sendMessage(interaction=interaction, embed=embed)
+        
+        #await interaction.response.send_message(embed=embed,ephemeral=False)
     
     except Exception as e:
         q.sendLogMessage(f"Error running help command: {e}", type="Error")
