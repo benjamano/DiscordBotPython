@@ -66,7 +66,9 @@ except Exception as e:
 @client.event
 async def on_ready():
     
-    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses
+    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses, disc
+    
+    disc = d.DiscordTools(client)
     
     if debugMode == True:
         statuses = cycle([f'Running in Debug mode on branch {Branch}',])
@@ -131,7 +133,7 @@ async def on_ready():
         colour = discord.Colour.green()
     )
     
-    await d.sendMessage(client, ChannelID=TestServerID, embed=embed)
+    await disc.sendMessage(ChannelID=TestServerID, embed=embed)
         
     while ServerConn == False:
         try:
@@ -337,7 +339,7 @@ async def checkPlaytime():
             for player in playerList:
                 
                 if not await s.updatePlaytime(player, 10):
-                        await d.getDiscordID(player, client)
+                        await disc.getDiscordID(player, client)
         else:
             q.sendLogMessage("No players to update, none online")
     
@@ -402,7 +404,7 @@ async def selectMovie(interaction: discord.Interaction):
         
         await interaction.response.defer(thinking=True)
         
-        selection, userName = await d.pickMovie(client)
+        selection, userName = await disc.pickMovie()
         
         if selection:
             embed = discord.Embed(
@@ -475,7 +477,7 @@ async def help(interaction:discord.Interaction):
         
         embed.add_field(name="Commands", value="`/playersonline` - Displays a list of all players online\n`/totalplaytime` - Displays the total playtime for each player today\n`selectmovie` - Randomly selects a movie from the 'movie suggestions' channel\n`/credits` - Displays the credits\n`/ping` - Pings the bot\n`/8ball` - Ask the 8ball a question\n`/willyrate` - Rates your willy\n`/howgayami` - How gay are you?", inline=False)
         
-        await d.sendMessage(client, interaction=interaction, embed=embed)
+        await disc.sendMessage(interaction=interaction, embed=embed)
         
         #await interaction.response.send_message(embed=embed,ephemeral=False)
     
