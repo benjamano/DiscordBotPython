@@ -35,7 +35,7 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
     
     try:
         
-        q.newline(baronly=True)
+        q.newline()
     
         #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
         
@@ -46,12 +46,12 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             
             csvf.close()
             
-        if all(row['username'] not in username for row in data) and username != "" and "[0m" not in username:
+        if all(row['username'] not in username for row in data) and username != "":
             q.sendLogMessage(f"Could not find username '{username}' in file, notifying Ben through DMs", type="Warning")
             
             return None
         
-        if all(row['username'] == username and str(row['discorduserid']) == "0" for row in data) and "[0m" not in username:
+        if all(row['username'] == username and str(row['discorduserid']) == "0" for row in data):
             q.sendLogMessage(f"Discord ID is empty for user: {username}, getting Discord ID through Ben using DMs", type="Warning")
             
             return None
