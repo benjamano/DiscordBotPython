@@ -291,14 +291,21 @@ async def notifyPlaytime():
             
             playTime = ""
             
+            playersignored = 0
+            
             for row in data:
-                playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
+                if row["minutesplayed"] != '0':
+                    playTime += str(f"- {row['username']} has played for {round((int(row['minutesplayed'])/60),1)} hours ({row['minutesplayed']} minutes)\n")
+                else:
+                    playersignored += 1
             
             embed = discord.Embed(
                 title = "Total Playtime for each player today",
                 description = f"Playtime today: \n{playTime}",
                 colour = discord.Colour.green()
             )
+        
+            embed.set_footer(text = f"{playersignored} {'players have' if playersignored > 1 else 'player has'} not played today")
             
             csvf.close()
             
