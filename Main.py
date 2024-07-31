@@ -66,9 +66,10 @@ except Exception as e:
 @client.event
 async def on_ready():
     
-    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses, disc
+    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses, disc, server
     
     disc = d.DiscordTools(client)
+    server = r.ServerTools(rcon)
     
     if debugMode == True:
         statuses = cycle([f'Running in Debug mode on branch {Branch}',])
@@ -240,7 +241,7 @@ class RestartButton(discord.ui.Button):
                 
                 if localConnection == 'True':
                     try:
-                        if await r.RestartServer(rcon, 120):
+                        if await r.RestartServer(120):
                             return True
                      
                         else:
