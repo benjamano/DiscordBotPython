@@ -176,7 +176,8 @@ async def on_ready():
                 q.sendLogMessage(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})", type="Warning")  
                 await asyncio.sleep(60)
             
-            q.sendLogMessage(f"Tries: {tries}\n")
+            q.sendLogMessage(f"Tries: {tries}")
+            q.newline(baronly=True)
     
     q.newline()
     
