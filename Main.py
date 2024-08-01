@@ -234,7 +234,7 @@ class RestartButton(discord.ui.Button):
             
             if localConnection == 'True':
                 try:
-                    if await r.RestartServer(120):
+                    if await server.RestartServer(120):
                         return True
                     
                     else:
@@ -266,7 +266,7 @@ class RestartButton(discord.ui.Button):
                 
                 if localConnection == 'True':
                     try:
-                        if await r.RestartServer(120):
+                        if await server.RestartServer(120):
                             return True
                      
                         else:
