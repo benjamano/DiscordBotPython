@@ -1,6 +1,7 @@
 import asyncio
 import subprocess
 import CommonFunctions.formatTools as q
+import os
 
 class ServerTools:
     def __init__(self, rcon):
@@ -23,7 +24,10 @@ class ServerTools:
             
             await asyncio.sleep(30)
             
-            subprocess.Popen([r"start", "cmd", "/c", "java", "-Xmx8G", "-jar", r"C:\Users\benme\Desktop\JavaBedrockServer\fabric-server-launch.jar", "nogui"], shell=True)
+            os.chdir(r"C:\Users\benme\Desktop\JavaBedrockServer")
+            
+            os.startfile("start.bat")
+            
             q.sendLogMessage("Server restarted", type="Success")
             
         except Exception as e:
