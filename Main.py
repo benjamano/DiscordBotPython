@@ -27,7 +27,7 @@ try:
     
     q.newline()
 
-    with open("StoredData/clientkey.txt", "r") as f:
+    with open("/StoredData/clientkey.txt", "r") as f:
         q.sendLogMessage("Reading from file clientkey.txt")
         
         key = f.readline().strip('\n')
