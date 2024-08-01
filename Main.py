@@ -234,14 +234,8 @@ class RestartButton(discord.ui.Button):
             
             if localConnection == 'True':
                 try:
-                    if await server.RestartServer(120):
-                        return True
+                    await server.RestartServer(120)
                     
-                    else:
-                        q.sendLogMessage("Failed to restart server", type="Error")
-                        
-                        return None
-                
                 except Exception as e:
                     q.sendLogMessage(f"Error restarting server: {e}", type="Error")
                     
