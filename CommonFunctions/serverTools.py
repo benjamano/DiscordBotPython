@@ -17,7 +17,7 @@ class ServerTools:
             
             await asyncio.sleep(seconds)
             
-            self.rcon.command("stop")
+            await self.rcon.command("stop")
             
             await asyncio.sleep(30)
             
