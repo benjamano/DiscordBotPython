@@ -13,7 +13,7 @@ class ServerTools:
         
         try:
             
-            self.rcon.command(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
+            await self.rcon.command(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
             
             await asyncio.sleep(seconds)
             
