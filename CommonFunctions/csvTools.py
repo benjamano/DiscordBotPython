@@ -1,5 +1,6 @@
 import CommonFunctions.formatTools as q
 import csv
+import datetime
 
 
 async def checkPlaytimeCSV(username):
@@ -157,3 +158,31 @@ async def createRecord(playername, minutesplayed, discordID):
     except Exception as e:
         q.sendLogMessage(f"Error creating record for {playername}: {e}", type="Error")
         return False
+    
+async def addToWachedMovies(movieName, date=None, requestUser=None):
+    try:
+        if not movieName:
+            q.sendLogMessage("No movie name provided", type="Error")
+            return False
+        
+        if not date:
+            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            
+        q.newline(baronly=True)
+            
+        q.sendLogMessage(f"Adding {movieName} to watched movies list with time: {date}")
+                
+        with open("StoredData/watchedMovies.csv", mode="a") as csvf:
+            csvf.write("\n")
+            fieldnames = ['movieName', 'dateWatched', 'requestedBy']
+            
+            csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
+            
+            csvWriter.writerow({'movieName': movieName, 'dateWatched': date, 'requestedBy': {requestUser}})
+            
+        q.sendLogMessage(f"Added {movieName} to watched movies list with time: {date}", type="Success")
+        
+        return True
+    
+    except Exception as e:
+        q.sendLogMessage(f"Error adding {movieName} to watched movies list: {e}", type="Error")

@@ -69,7 +69,6 @@ async def on_ready():
     global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses, disc, server
     
     disc = d.DiscordTools(client)
-    server = r.ServerTools(rcon)
     
     if debugMode == True:
         statuses = cycle([f'Running in Debug mode on branch {Branch}',])
@@ -151,6 +150,8 @@ async def on_ready():
                     
                     #print(f"Response: {response}")
                     
+                    server = r.ServerTools(rcon)
+                    
                     ServerConn = True
                 
                 else:
@@ -227,7 +228,30 @@ class RestartButton(discord.ui.Button):
       
         userID = interaction.user.id
         
-        if userID not in view.clicked_users:
+        if userID == 321317643099439104:
+            q.sendLogMessage(f"Restart Button clicked by Ben, Restarting Server...", type="Success")
+            
+            if localConnection == 'True':
+                try:
+                    if await r.RestartServer(120):
+                        return True
+                    
+                    else:
+                        q.sendLogMessage("Failed to restart server", type="Error")
+                        
+                        return None
+                
+                except Exception as e:
+                    q.sendLogMessage(f"Error restarting server: {e}", type="Error")
+                    
+                    return None
+                
+            else:
+                q.sendLogMessage("Bot is outside of the network RCON connection unavailable, skipping server restart.", type="Warning")
+                
+                return None
+                    
+        elif userID not in view.clicked_users:
             view.clicked_users.add(userID)
           
             remaining_users = 2 - len(view.clicked_users)
@@ -398,6 +422,11 @@ async def restartServer(interaction: discord.Interaction):
         
         await interaction.response.send_message(f"Error restarting server, try again later.", ephemeral=True)
 
+
+@client.tree.command(name="movieswatched", description="Displays a list of all movies watched")
+async def moviesWatched(interaction: discord.Interaction):
+    pass
+
         
 @client.tree.command(name="selectmovie", description="Selects a random movie from the 'Movie Suggestions' channel")
 async def selectMovie(interaction: discord.Interaction):
@@ -423,6 +452,8 @@ async def selectMovie(interaction: discord.Interaction):
                 colour = discord.Colour.random()
             )
             
+            await s.addToWachedMovies(selection, requestUser=userName)
+                
             try:
                 end_time = time.time()
                 duration = end_time - start_time
