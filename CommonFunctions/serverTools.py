@@ -16,14 +16,14 @@ class ServerTools:
             self.rcon.command(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
             q.sendLogMessage(f"Server restarting in {seconds/60} minutes. ({seconds} seconds)", type="Info")
             
-            await asyncio.sleep(seconds)
+            await asyncio.sleep(10)
             
             self.rcon.command("stop")
             q.sendLogMessage("Server stopped", type="Info")
             
             await asyncio.sleep(30)
             
-            subprocess.Popen([r"C:\Users\benme\Documents\GitHub\Discord-Bot-Python\start - Shortcut.lnk"])
+            subprocess.Popen([r"C:\Users\benme\Desktop\JavaBedrockServer\start.bat"])
             q.sendLogMessage("Server restarted", type="Success")
             
         except Exception as e:
