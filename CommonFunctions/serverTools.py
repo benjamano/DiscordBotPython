@@ -23,7 +23,7 @@ class ServerTools:
             
             await asyncio.sleep(30)
             
-            subprocess.Popen([r"C:\Users\benme\Desktop\JavaBedrockServer\start.bat"])
+            subprocess.Popen([r"start", "cmd", "/c", "java", "-Xmx8G", "-jar", r"C:\Users\benme\Desktop\JavaBedrockServer\fabric-server-launch.jar", "nogui"], shell=True)
             q.sendLogMessage("Server restarted", type="Success")
             
         except Exception as e:
