@@ -13,15 +13,15 @@ class ServerTools:
         
         try:
             
-            await self.rcon.command(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
+            self.rcon.command(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
             q.sendLogMessage(f"Server restarting in {seconds/60} minutes. ({seconds} seconds)", type="Info")
             
-            asyncio.sleep(seconds)
+            await asyncio.sleep(seconds)
             
             self.rcon.command("stop")
             q.sendLogMessage("Server stopped", type="Info")
             
-            asyncio.sleep(30)
+            await asyncio.sleep(30)
             
             subprocess.Popen([r"C:\Users\benme\Documents\GitHub\Discord-Bot-Python\start - Shortcut.lnk"])
             q.sendLogMessage("Server restarted", type="Success")
