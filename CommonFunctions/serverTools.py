@@ -19,7 +19,7 @@ class ServerTools:
             
             self.rcon.command("stop")
             
-            await asyncio.sleep(30)
+            asyncio.sleep(30)
             
             subprocess.Popen([r"C:\Users\benme\Documents\GitHub\Discord-Bot-Python\start - Shortcut.lnk"])
             
