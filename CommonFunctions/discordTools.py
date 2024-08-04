@@ -43,7 +43,7 @@ class DiscordTools:
             
             return None
 
-        self.newline()
+        q.newline()
         
         return True
 
