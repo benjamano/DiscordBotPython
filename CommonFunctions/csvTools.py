@@ -7,7 +7,7 @@ async def checkPlaytimeCSV(username):
     try:
         shame = False
         
-        with open("/StoredData/hours.csv", mode="r") as csvf:
+        with open("StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             q.newline(baronly=True)
@@ -105,7 +105,7 @@ async def getUserID(player):
     try:
         q.sendLogMessage(f"Searching for userID of player: {player}")
         
-        with open("/StoredData/hours.csv", mode="r") as csvf:
+        with open("StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             data = list(csvReader)
@@ -127,7 +127,7 @@ async def updateRecord(playername, discordID):
     try:
         q.sendLogMessage(f"Updating '{playername}' discord ID to '{discordID}'")
         
-        with open("/StoredData/hours.csv", mode="r") as csvf:
+        with open("StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             data = list(csvReader)
@@ -137,7 +137,7 @@ async def updateRecord(playername, discordID):
                 row['discorduserid'] = discordID
                 #q.sendLogMessage(f"Updated '{playername}' discord ID to '{discordID}'", type="Success")
         
-        with open("/StoredData/hours.csv", mode="w", newline='') as csvf:
+        with open("StoredData/hours.csv", mode="w", newline='') as csvf:
             fieldnames = ['username', 'minutesplayed', 'discorduserid']
             
             csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
@@ -157,7 +157,7 @@ async def createRecord(playername, minutesplayed, discordID):
     try:
         q.sendLogMessage(f"Creating record for {playername} with {minutesplayed} minutes played and discord ID {discordID}")
         
-        with open("/StoredData/hours.csv", mode="a", newline='') as csvf:
+        with open("StoredData/hours.csv", mode="a", newline='') as csvf:
             fieldnames = ['username', 'minutesplayed', 'discorduserid']
             
             csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
