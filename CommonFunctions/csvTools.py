@@ -37,7 +37,7 @@ async def updatePlaytime(username = "", additionalMinutes = 0, reset = False):
     try:
         
         if reset == True:
-            with open("/StoredData/hours.csv", mode="r") as csvf:
+            with open("StoredData/hours.csv", mode="r") as csvf:
                 csvReader = csv.DictReader(csvf)
                 
                 data = list(csvReader)
@@ -55,7 +55,7 @@ async def updatePlaytime(username = "", additionalMinutes = 0, reset = False):
         
             #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
             
-            with open("/StoredData/hours.csv", mode="r") as csvf:
+            with open("StoredData/hours.csv", mode="r") as csvf:
                 csvReader = csv.DictReader(csvf)
                 
                 data = list(csvReader)
@@ -84,7 +84,7 @@ async def updatePlaytime(username = "", additionalMinutes = 0, reset = False):
                     q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
             
         
-        with open("/StoredData/hours.csv", mode="w", newline='') as csvf:
+        with open("StoredData/hours.csv", mode="w", newline='') as csvf:
             fieldnames = ['username', 'minutesplayed', 'discorduserid']
             
             csvWriter = csv.DictWriter(csvf, fieldnames=fieldnames)
