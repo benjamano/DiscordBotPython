@@ -368,7 +368,7 @@ async def checkPlaytime():
                 player = player.strip("[0m")
                 
                 if not await s.updatePlaytime(player, 10):
-                        await disc.getDiscordID(player, client)
+                        await disc.getDiscordID(player)
         else:
             q.sendLogMessage("No players to update, none online")
     

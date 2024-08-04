@@ -17,7 +17,7 @@ class ServerTools:
             self.rcon.command(f"say Server restarting in {seconds/60} minutes. ({seconds} seconds)")
             q.sendLogMessage(f"Server restarting in {seconds/60} minutes. ({seconds} seconds)", type="Info")
             
-            await asyncio.sleep(10)
+            await asyncio.sleep(seconds)
             
             self.rcon.command("stop")
             q.sendLogMessage("Server stopped", type="Info")
