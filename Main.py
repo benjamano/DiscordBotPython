@@ -181,7 +181,7 @@ async def on_ready():
     
     q.newline()
     
-    with open("/StoredData/hours.csv", mode="r") as csvf:
+    with open("StoredData/hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf, ["username", "minutesplayed","discorduserid"])
 
         lineCount = 0
