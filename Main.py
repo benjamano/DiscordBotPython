@@ -312,7 +312,7 @@ async def notifyPlaytime():
     try:
         channel = client.get_channel(RandStuffGeneralID)
         
-        with open("/StoredData/hours.csv", mode="r") as csvf:
+        with open("StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             data = list(csvReader)
@@ -591,7 +591,7 @@ async def playersonline(interaction: discord.Interaction):
 @client.tree.command(name="totalplaytime", description="Displays the total playtime for each player on the Minecraft Server today")
 async def totalplaytime(interaction: discord.Interaction):
     try:
-        with open("/StoredData/hours.csv", mode="r") as csvf:
+        with open("StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             data = list(csvReader)

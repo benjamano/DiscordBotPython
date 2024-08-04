@@ -183,7 +183,7 @@ async def addToWachedMovies(movieName, date=None, requestUser=None):
             
         q.sendLogMessage(f"Adding {movieName} to watched movies list with time: {date}")
                 
-        with open("/StoredData/watchedMovies.csv", mode="a") as csvf:
+        with open("StoredData/watchedMovies.csv", mode="a") as csvf:
             csvf.write("\n")
             fieldnames = ['movieName', 'dateWatched', 'requestedBy']
             
