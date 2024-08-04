@@ -380,11 +380,7 @@ async def checkPlaytime():
         
 @tasks.loop(time=datetime.time(hour=0, minute=0))
 async def resetPlaytime():
-    await s.updatePlaytime(".mattcur", 0, reset=True)
-    await s.updatePlaytime("Jedi_Maxster", 0, reset=True)
-    await s.updatePlaytime("shortoctopus", 0, reset=True)
-    await s.updatePlaytime("Rugged__Base", 0, reset=True)
-    await s.updatePlaytime("Benjamano", 0, reset=True)
+    await s.updatePlaytime(resetAll=True)
 
     
     #ug await channel.send(content=f"{user.mention} has been playing Minecraft for {round((result[0] / 60),1)} hours, please tell them to touch some grass", allowed_mentions=discord.AllowedMentions(users=True))

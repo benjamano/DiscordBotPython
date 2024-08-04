@@ -32,46 +32,57 @@ async def checkPlaytimeCSV(username):
         return None, None
 
 
-async def updatePlaytime(username, additionalMinutes, reset = False):
+async def updatePlaytime(username = "", additionalMinutes = 0, reset = False):
     
     try:
         
-        q.newline()
-    
-        #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
-        
-        with open("StoredData/hours.csv", mode="r") as csvf:
-            csvReader = csv.DictReader(csvf)
-            
-            data = list(csvReader)
-            
-            csvf.close()
-            
-        if all(row['username'] not in username for row in data) and username != "":
-            q.sendLogMessage(f"Could not find username '{username}' in file, notifying Ben through DMs", type="Warning")
-            
-            return None
-        
-        if all(row['username'] == username and str(row['discorduserid']) == "0" for row in data):
-            q.sendLogMessage(f"Discord ID is empty for user: {username}, getting Discord ID through Ben using DMs", type="Warning")
-            
-            return None
-        
-        #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes", type="Info")
-
-        for row in data:
-            
-            #q.sendLogMessage(f"Updating {row['username']}")
-            
-            if row['username'] in username and reset == True:
+        if reset == True:
+            with open("StoredData/hours.csv", mode="r") as csvf:
+                csvReader = csv.DictReader(csvf)
+                
+                data = list(csvReader)
+                
+                csvf.close()
+                
+            for row in data:
                 row['minutesplayed'] = str(0)
                 q.newline(baronly=True)
                 q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
             
-            elif row['username'] in username:                
-                row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
-                q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
-                q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
+        else:
+        
+            q.newline()
+        
+            #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes")
+            
+            with open("StoredData/hours.csv", mode="r") as csvf:
+                csvReader = csv.DictReader(csvf)
+                
+                data = list(csvReader)
+                
+                csvf.close()
+                
+            if all(row['username'] not in username for row in data) and username != "":
+                q.sendLogMessage(f"Could not find username '{username}' in file, notifying Ben through DMs", type="Warning")
+                
+                return None
+            
+            if all(row['username'] == username and str(row['discorduserid']) == "0" for row in data):
+                q.sendLogMessage(f"Discord ID is empty for user: {username}, getting Discord ID through Ben using DMs", type="Warning")
+                
+                return None
+            
+            #q.sendLogMessage(f"Updating {username}'s playtime by {additionalMinutes} minutes", type="Info")
+
+            for row in data:
+                
+                #q.sendLogMessage(f"Updating {row['username']}")
+                
+                if row['username'] in username:                
+                    row['minutesplayed'] = str(int(row['minutesplayed']) + additionalMinutes)
+                    q.sendLogMessage(f"Increased {username}'s minutes played by {additionalMinutes}", type="Success")
+                    q.sendLogMessage(f"New Minutes: {row['minutesplayed']} ({(int(row['minutesplayed']))/60} Hours)", type="Info")
+            
         
         with open("StoredData/hours.csv", mode="w", newline='') as csvf:
             fieldnames = ['username', 'minutesplayed', 'discorduserid']
@@ -82,9 +93,9 @@ async def updatePlaytime(username, additionalMinutes, reset = False):
             csvWriter.writerows(data)
             
             csvf.close()
-            
-        return True
-    
+                
+            return True
+        
     except Exception as e:
         q.sendLogMessage(f"Error updating {username}'s playtime: {e}", type="Error")
         return "Error"
