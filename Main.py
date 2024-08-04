@@ -221,7 +221,8 @@ async def on_ready():
 
 
 class RestartButton(discord.ui.Button):
-    def __init__(self):
+    def __init__(self, reason):
+        self.reason = reason
         super().__init__(label="Restart Server", style=discord.ButtonStyle.green, custom_id="btnRestartServer")
 
     async def callback(self, interaction: discord.Interaction):
@@ -234,7 +235,7 @@ class RestartButton(discord.ui.Button):
             
             if localConnection == 'True':
                 try:
-                    await server.RestartServer(120)
+                    await server.RestartServer(120, self.reason)
                     
                 except Exception as e:
                     q.sendLogMessage(f"Error restarting server: {e}", type="Error")
@@ -288,10 +289,11 @@ class RestartButton(discord.ui.Button):
 
 
 class RestartView(discord.ui.View):
-    def __init__(self):
+    def __init__(self, reason):
+        self.reason = reason
         super().__init__()
         self.clicked_users = set()
-        self.add_item(RestartButton())
+        self.add_item(RestartButton(reason))
 
 
 #------------------------------------------------------| Task Loops |------------------------------------------------------#
@@ -404,13 +406,14 @@ async def on_command_error(ctx, error):
 
 
 @client.tree.command(name="restartserver", description="Restarts the Minecraft Server")
-async def restartServer(interaction: discord.Interaction):
+@app_commands.describe(reason="Restart Reason")
+async def restartServer(interaction: discord.Interaction, *, reason: str):
     try:
         q.newline()
         
         q.sendLogMessage(f"Restart button command triggered by {interaction.user}", type="Warning")
         
-        await interaction.response.send_message("To restart the server, click the button below", view=RestartView())
+        await interaction.response.send_message("To restart the server, click the button below", view=RestartView(reason))
     
     except Exception as e:
         q.sendLogMessage(f"Error sending restart button: {e}", type="Error")
