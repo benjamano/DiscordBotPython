@@ -27,7 +27,7 @@ try:
     
     q.newline()
 
-    with open("StoredData/clientkey.txt", "r") as f:
+    with open("/StoredData/clientkey.txt", "r") as f:
         q.sendLogMessage("Reading from file clientkey.txt")
         
         key = f.readline().strip('\n')
@@ -44,7 +44,7 @@ try:
     
     q.newline(baronly=True)
         
-    with open("StoredData/version.txt", "r") as f:
+    with open("/StoredData/version.txt", "r") as f:
         q.sendLogMessage("Reading from file version.txt")
         
         VersionNo = f.readline().strip('\n')
@@ -181,7 +181,7 @@ async def on_ready():
     
     q.newline()
     
-    with open("StoredData/hours.csv", mode="r") as csvf:
+    with open("/StoredData/hours.csv", mode="r") as csvf:
         csvReader = csv.DictReader(csvf, ["username", "minutesplayed","discorduserid"])
 
         lineCount = 0
@@ -312,7 +312,7 @@ async def notifyPlaytime():
     try:
         channel = client.get_channel(RandStuffGeneralID)
         
-        with open("StoredData/hours.csv", mode="r") as csvf:
+        with open("/StoredData/hours.csv", mode="r") as csvf:
             csvReader = csv.DictReader(csvf)
             
             data = list(csvReader)
