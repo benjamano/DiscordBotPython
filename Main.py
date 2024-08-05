@@ -411,7 +411,7 @@ async def on_command_error(ctx, error):
 @client.tree.command(name="resetplaytime", description="Used by Ben only")
 async def resetplaytimecommand(interaction: discord.Interaction):
     try:
-        s.updatePlaytime(resetAll=True)
+        await s.updatePlaytime(resetAll=True)
        
     except Exception as e:
         q.sendLogMessage(f"Error occured while reseting playtime from discord command: {e}", type="Error")
