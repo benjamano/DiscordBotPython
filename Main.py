@@ -66,154 +66,160 @@ except Exception as e:
 
 @client.event
 async def on_ready():
-    
-    global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses, disc, server
-    
-    disc = d.DiscordTools(client)
-    
-    if debugMode == True:
-        statuses = cycle([f'Running in Debug mode on branch {Branch}',])
-    else:
-        statuses = cycle(['Back from the dead!','/help',])
-        
-    q.newline(withDivider=False)
-    
-    print("""
-    ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
-    ██╔══██╗██╔════╝████╗░██║████╗░████║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗
-    ██████╦╝█████╗░░██╔██╗██║██╔████╔██║█████╗░░██████╔╝██║░░╚═╝█████╗░░██████╔╝
-    ██╔══██╗██╔══╝░░██║╚████║██║╚██╔╝██║██╔══╝░░██╔══██╗██║░░██╗██╔══╝░░██╔══██╗
-    ██████╦╝███████╗██║░╚███║██║░╚═╝░██║███████╗██║░░██║╚█████╔╝███████╗██║░░██║
-    ╚═════╝░╚══════╝╚═╝░░╚══╝╚═╝░░░░░╚═╝╚══════╝╚═╝░░╚═╝░╚════╝░╚══════╝╚═╝░░╚═╝""")
 
-    print("""
-    ░█████╗░██████╗░░█████╗░███████╗██╗░░░██╗███╗░░██╗███████╗██╗██╗░░░░░  ██████╗░░░░░█████╗░
-    ██╔══██╗██╔══██╗██╔══██╗╚════██║╚██╗░██╔╝████╗░██║██╔════╝██║██║░░░░░  ╚════██╗░░░██╔══██╗
-    ██║░░╚═╝██████╔╝███████║░░███╔═╝░╚████╔╝░██╔██╗██║█████╗░░██║██║░░░░░  ░░███╔═╝░░░██║░░██║
-    ██║░░██╗██╔══██╗██╔══██║██╔══╝░░░░╚██╔╝░░██║╚████║██╔══╝░░██║██║░░░░░  ██╔══╝░░░░░██║░░██║
-    ╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
-    ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
-
-    print(f"Version {VersionNo} ({Branch})\n")
-        
-    ServerConn = False
-    
-    q.newline()
-    
-    q.sendLogMessage(f'Ping: {round(client.latency * 1000)}ms')
-    
-    change_status.start()
-  
-    q.newline()
-    
-    q.newline(baronly=True)
-    
-    q.sendLogMessage(f'Logged in as {client.user}', type="Success")
-    
-    q.newline(baronly=True)
-    
     try:
-        synced = await client.tree.sync()
+    
+        global ServerConn, rcon, qry, ServerIP, PORT, VersionNo, Branch, key, statuses, disc, server
+    
+        disc = d.DiscordTools(client)
+    
+        if debugMode == True:
+            statuses = cycle([f'Running in Debug mode on branch {Branch}',])
+        else:
+            statuses = cycle(['Back from the dead!','/help',])
         
-        q.sendLogMessage(f"Synced {len(synced)} command(s)", type="Success")
+        q.newline(withDivider=False)
     
-    except Exception as e:
-        q.sendLogMessage(f"Error syncing command tree: {e}", type="Error")
+        print("""
+        ██████╗░███████╗███╗░░██╗███╗░░░███╗███████╗██████╗░░█████╗░███████╗██████╗░
+        ██╔══██╗██╔════╝████╗░██║████╗░████║██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗
+        ██████╦╝█████╗░░██╔██╗██║██╔████╔██║█████╗░░██████╔╝██║░░╚═╝█████╗░░██████╔╝
+        ██╔══██╗██╔══╝░░██║╚████║██║╚██╔╝██║██╔══╝░░██╔══██╗██║░░██╗██╔══╝░░██╔══██╗
+        ██████╦╝███████╗██║░╚███║██║░╚═╝░██║███████╗██║░░██║╚█████╔╝███████╗██║░░██║
+        ╚═════╝░╚══════╝╚═╝░░╚══╝╚═╝░░░░░╚═╝╚══════╝╚═╝░░╚═╝░╚════╝░╚══════╝╚═╝░░╚═╝""")
+
+        print("""
+        ░█████╗░██████╗░░█████╗░███████╗██╗░░░██╗███╗░░██╗███████╗██╗██╗░░░░░  ██████╗░░░░░█████╗░
+        ██╔══██╗██╔══██╗██╔══██╗╚════██║╚██╗░██╔╝████╗░██║██╔════╝██║██║░░░░░  ╚════██╗░░░██╔══██╗
+        ██║░░╚═╝██████╔╝███████║░░███╔═╝░╚████╔╝░██╔██╗██║█████╗░░██║██║░░░░░  ░░███╔═╝░░░██║░░██║
+        ██║░░██╗██╔══██╗██╔══██║██╔══╝░░░░╚██╔╝░░██║╚████║██╔══╝░░██║██║░░░░░  ██╔══╝░░░░░██║░░██║
+        ╚█████╔╝██║░░██║██║░░██║███████╗░░░██║░░░██║░╚███║███████╗██║███████╗  ███████╗██╗╚█████╔╝
+        ░╚════╝░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚══╝╚══════╝╚═╝╚══════╝  ╚══════╝╚═╝░╚════╝░""")
+
+        print(f"Version {VersionNo} ({Branch})\n")
         
-    q.newline(baronly=True)
+        ServerConn = False
     
-    q.newline()
+        q.newline()
     
-    #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
+        q.sendLogMessage(f'Ping: {round(client.latency * 1000)}ms')
     
-    tries = 0
+        change_status.start()
+  
+        q.newline()
     
-    embed = discord.Embed(
-        title = "Bot Started",
-        description = f"Bot has started successfully\nVersion: {VersionNo} ({Branch})",
-        colour = discord.Colour.green()
-    )
+        q.newline(baronly=True)
     
-    await disc.sendMessage(ChannelID=TestServerID, embed=embed)
-        
-    while ServerConn == False:
+        q.sendLogMessage(f'Logged in as {client.user}', type="Success")
+    
+        q.newline(baronly=True)
+    
         try:
-            if localConnection == 'True':
-                #print(f"Attempting to connect to server at IP {ServerIP}:{PORT}")
-            
-                rcon = RCONClient('127.0.0.1', port=25575)
-                qry = QUERYClient(host='127.0.0.1', port=25565)
-                
-                if rcon.login('1552'):
-                    q.sendLogMessage("RCON Login Successful!", type="Success")
-                    
-                    response = rcon.command('say Crazy Neil is watching....')
-                    
-                    #print(f"Response: {response}")
-                    
-                    server = r.ServerTools(rcon)
-                    
-                    ServerConn = True
-                
-                else:
-                    raise Exception("Server Connection Failed")
-            else:
-                q.sendLogMessage("Bot is starting outside of the network, skipping RCON connection.", type="Warning")
-                break
+            synced = await client.tree.sync()
+        
+            q.sendLogMessage(f"Synced {len(synced)} command(s)", type="Success")
     
         except Exception as e:
-            
-            tries += 1
-            
-            if tries > 10:
-                q.sendLogMessage(f"Couldn't connect to server after 10 tries. Waiting for 30 Minutes. ({e})", type="Error")
-                await asyncio.sleep(1800)
-            
-            elif tries > 4:
-                q.sendLogMessage(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})", type="Warning")
-                await asyncio.sleep(300)
-            
-            else:
-                q.sendLogMessage(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})", type="Warning")  
-                await asyncio.sleep(60)
-            
-            q.sendLogMessage(f"Tries: {tries}")
-            q.newline(baronly=True)
+            q.sendLogMessage(f"Error syncing command tree: {e}", type="Error")
+        
+        q.newline(baronly=True)
     
-    q.newline()
+        q.newline()
     
-    with open("StoredData/hours.csv", mode="r") as csvf:
-        csvReader = csv.DictReader(csvf, ["username", "minutesplayed","discorduserid"])
+        #await client.change_presence(activity=discord.Game(name='Back from the dead!')) # When the bot is started, the status 'Back from the dead!' displays on it's status NOTE: The task names 'change status' now automates this, changing the status every 10 seconds
+    
+        tries = 0
+    
+        embed = discord.Embed(
+            title = "Bot Started",
+            description = f"Bot has started successfully\nVersion: {VersionNo} ({Branch})",
+            colour = discord.Colour.green()
+        )
+    
+        await disc.sendMessage(ChannelID=TestServerID, embed=embed)
+        
+        while ServerConn == False:
+            try:
+                if localConnection == 'True':
+                    #print(f"Attempting to connect to server at IP {ServerIP}:{PORT}")
+            
+                    rcon = RCONClient('127.0.0.1', port=25575)
+                    qry = QUERYClient(host='127.0.0.1', port=25565)
+                
+                    if rcon.login('1552'):
+                        q.sendLogMessage("RCON Login Successful!", type="Success")
+                    
+                        response = rcon.command('say Crazy Neil is watching....')
+                    
+                        #print(f"Response: {response}")
+                    
+                        server = r.ServerTools(rcon)
+                    
+                        ServerConn = True
+                
+                    else:
+                        raise Exception("Server Connection Failed")
+                else:
+                    q.sendLogMessage("Bot is starting outside of the network, skipping RCON connection.", type="Warning")
+                    break
+    
+            except Exception as e:
+            
+                tries += 1
+            
+                if tries > 10:
+                    q.sendLogMessage(f"Couldn't connect to server after 10 tries. Waiting for 30 Minutes. ({e})", type="Error")
+                    await asyncio.sleep(1800)
+            
+                elif tries > 4:
+                    q.sendLogMessage(f"Couldn't connect to server after 5 tries. Waiting for 5 Minutes. ({e})", type="Warning")
+                    await asyncio.sleep(300)
+            
+                else:
+                    q.sendLogMessage(f"Couldn't connect to server, probably starting, waiting for 1 minute. ({e})", type="Warning")  
+                    await asyncio.sleep(60)
+            
+                q.sendLogMessage(f"Tries: {tries}")
+                q.newline(baronly=True)
+    
+        q.newline()
+    
+        with open("StoredData/hours.csv", mode="r") as csvf:
+            csvReader = csv.DictReader(csvf, ["username", "minutesplayed","discorduserid"])
 
-        lineCount = 0
+            lineCount = 0
         
-        for row in csvReader:
-            if lineCount == 0:
-                q.sendLogMessage(f"Column names detected: {" | ".join(row)}")
+            for row in csvReader:
+                if lineCount == 0:
+                    q.sendLogMessage(f"Column names detected: {" | ".join(row)}")
                 
-            else:
-                q.sendLogMessage(f"{row["username"]} has {row["minutesplayed"]} minutes played, and a discord ID of {row["discorduserid"]}.")
+                else:
+                    q.sendLogMessage(f"{row["username"]} has {row["minutesplayed"]} minutes played, and a discord ID of {row["discorduserid"]}.")
                 
-            lineCount += 1
+                lineCount += 1
             
-        csvf.close()
+            csvf.close()
     
-    q.newline()
+        q.newline()
     
-    try:
+        try:
         
-        q.sendLogMessage("Attempting to start tasks")
+            q.sendLogMessage("Attempting to start tasks")
         
-        checkPlaytime.start()
+            checkPlaytime.start()
             
-        resetPlaytime.start()
+            resetPlaytime.start()
         
-        notifyPlaytime.start()
+            notifyPlaytime.start()
         
-        q.sendLogMessage("Tasks started successfully", type="Success")
+            q.sendLogMessage("Tasks started successfully", type="Success")
             
+        except Exception as e:
+            q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
+       
+
     except Exception as e:
-        q.sendLogMessage(f"Failed to run a task: {e}", type="Error")
+        print(f"Error: {e}")
 
 
 
