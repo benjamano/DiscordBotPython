@@ -409,7 +409,7 @@ async def on_command_error(ctx, error):
 
 
 @client.tree.command(name="resetplaytime", description="Used by Ben only")
-async def resetplaytimecommand(interaction: discord.interaction):
+async def resetplaytimecommand(interaction: discord.Interaction):
     try:
         s.updatePlaytime(resetAll=True)
        
