@@ -32,11 +32,11 @@ async def checkPlaytimeCSV(username):
         return None, None
 
 
-async def updatePlaytime(username = "", additionalMinutes = 0, reset = False):
+async def updatePlaytime(username = "", additionalMinutes = 0, resetAll = False):
     
     try:
         
-        if reset == True:
+        if resetAll == True:
             with open("StoredData/hours.csv", mode="r") as csvf:
                 csvReader = csv.DictReader(csvf)
                 
@@ -45,9 +45,12 @@ async def updatePlaytime(username = "", additionalMinutes = 0, reset = False):
                 csvf.close()
                 
             for row in data:
-                row['minutesplayed'] = str(0)
-                q.newline(baronly=True)
-                q.sendLogMessage(f"Reset {username}'s minutes.", type="Success")
+                try:
+                    row['minutesplayed'] = str(0)
+                    q.newline(baronly=True)
+                    q.sendLogMessage(f"Reset {row['username']}'s minutes.", type="Success")
+                except Exception as e:
+                    q.sendLogMessage(f"Error occured while reseting a user's playtime: {e}'", type="Error")
             
         else:
         

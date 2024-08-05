@@ -15,3 +15,4 @@ CommonFunctions/__pycache__/formatTools.cpython-312.pyc
 CommonFunctions/__pycache__/csvTools.cpython-312.pyc
 *.pyc
 /CommonFunctions/__pycache__
+/.vs

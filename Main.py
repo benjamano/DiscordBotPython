@@ -1,3 +1,4 @@
+from pydoc import describe
 import discord
 import random
 import datetime
@@ -102,7 +103,7 @@ async def on_ready():
     q.sendLogMessage(f'Ping: {round(client.latency * 1000)}ms')
     
     change_status.start()
-        
+  
     q.newline()
     
     q.newline(baronly=True)
@@ -400,6 +401,15 @@ async def on_command_error(ctx, error):
         
         await ctx.send("An error occurred. Please try again later.")
 
+
+@client.tree.command(name="resetplaytime", description="Used by Ben only")
+async def resetplaytimecommand(interaction: discord.interaction):
+    try:
+        s.updatePlaytime(resetAll=True)
+       
+    except Exception as e:
+        q.sendLogMessage(f"Error occured while reseting playtime from discord command: {e}", type="Error")
+        
 
 @client.tree.command(name="restartserver", description="Restarts the Minecraft Server")
 @app_commands.describe(reason="Restart Reason")
