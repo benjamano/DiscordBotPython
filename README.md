@@ -1,5 +1,5 @@
 # Discord-Bot-Python
-A simple Discord bot made using Python.
+A ~~simple~~ Discord bot made using Python.
 
 This is a program designed to work with the discord.py library used to access Discord's bot API and create a bot.
 
