@@ -1,10 +1,6 @@
 # Discord-Bot-Python
 A simple Discord bot made using Python.
 
-This is a simple program designed to work with the discord.py library used to access Discord's bot API and create a bot.
+This is a program designed to work with the discord.py library used to access Discord's bot API and create a bot.
 
-I used to have a much more detailed version of this code with over 4000 lines of code, but managed to corrupt the hardrive holding it while downloading a game.
-
-## To setup the bot:
-
-Enter the Bot Token created in the discord developer portal, into the "Token" field, and it should hook onto it and run!
+It is very complicated and has features you may not find useful, so if you can understand the code and remove the parts you don't need, I'm happy for the use of this code elsewhere.
